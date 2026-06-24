@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 from src.ui.base_layout import style_background_dashboard, style_base_layout
 
@@ -84,11 +85,15 @@ def student_dashboard():
                 ],
                 footer_callback=unenroll_button
             )
+    # Chatbot widget
+    components.html(
+        """<script src='https://www.noupe.com/embed/019ef88240ad7fcebbd43804d761b41a3257.js'></script>""",
+        height=0,
+    )
     footer_dashboard()
 
 
 def student_screen():
-
 
     style_background_dashboard()
     style_base_layout()
@@ -185,5 +190,9 @@ def student_screen():
                     st.warning('Please enter your name!')
 
 
-        
+    # Chatbot widget
+    components.html(
+        """<script src='https://www.noupe.com/embed/019ef88240ad7fcebbd43804d761b41a3257.js'></script>""",
+        height=0,
+    )
     footer_dashboard()

@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 from src.ui.base_layout import style_background_dashboard, style_base_layout
 
@@ -89,6 +90,11 @@ def teacher_dashboard():
     
 
 
+    # Chatbot widget
+    components.html(
+        """<script src='https://www.noupe.com/embed/019ef88240ad7fcebbd43804d761b41a3257.js'></script>""",
+        height=0,
+    )
     footer_dashboard()
 
 def teacher_tab_take_attendance():
@@ -332,6 +338,11 @@ def teacher_screen_login():
         if st.button('Register Instead', type="primary", icon=':material/passkey:', width='stretch'):
             st.session_state.teacher_login_type = 'register'
 
+    # Chatbot widget
+    components.html(
+        """<script src='https://www.noupe.com/embed/019ef88240ad7fcebbd43804d761b41a3257.js'></script>""",
+        height=0,
+    )
     footer_dashboard()
 
 
@@ -397,4 +408,9 @@ def teacher_screen_register():
         if st.button('Login Instead', type="primary", icon=':material/passkey:', width='stretch'):
             st.session_state.teacher_login_type = 'login'
 
+    # Chatbot widget
+    components.html(
+        """<script src='https://www.noupe.com/embed/019ef88240ad7fcebbd43804d761b41a3257.js'></script>""",
+        height=0,
+    )
     footer_dashboard()
