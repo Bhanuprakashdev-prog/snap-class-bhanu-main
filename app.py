@@ -1,9 +1,10 @@
 
+# v2 - force reload
 import streamlit as st
-import streamlit.components.v1 as components
 from src.screens.home_screen import home_screen
 from src.screens.teacher_screen import teacher_screen
 from src.screens.student_screen import student_screen
+import streamlit.components.v1 as components
 
 from src.components.dialog_auto_enroll import auto_enroll_dialog
 
@@ -28,6 +29,7 @@ def main():
         })();
         </script>
     """, height=0)
+
     if 'login_type' not in st.session_state:
         st.session_state['login_type'] = None
 

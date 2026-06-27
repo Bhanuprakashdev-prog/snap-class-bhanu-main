@@ -1,7 +1,8 @@
 import streamlit as st
-import streamlit.components.v1 as components
 
 from src.ui.base_layout import style_background_dashboard, style_base_layout
+import streamlit.components.v1 as components
+
 
 from src.components.header import header_dashboard
 from src.components.footer import footer_dashboard
@@ -90,6 +91,7 @@ def student_dashboard():
         """<script src='https://www.noupe.com/embed/019ef88240ad7fcebbd43804d761b41a3257.js'></script>""",
         height=0,
     )
+
     footer_dashboard()
 
 
@@ -189,10 +191,12 @@ def student_screen():
                 else:
                     st.warning('Please enter your name!')
 
-
-    # Chatbot widget
+                    # Chatbot widget
     components.html(
         """<script src='https://www.noupe.com/embed/019ef88240ad7fcebbd43804d761b41a3257.js'></script>""",
         height=0,
     )
+
+
+    
     footer_dashboard()

@@ -1,8 +1,8 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from src.components.header import header_home
 from src.components.footer import footer_home
 from src.ui.base_layout import style_base_layout, style_background_home
+import streamlit.components.v1 as components
 def home_screen():
 
 
@@ -27,10 +27,11 @@ def home_screen():
             st.session_state['login_type']='teacher'
             st.rerun()
 
-    # Chatbot widget
+            # Chatbot widget
     components.html(
         """<script src='https://www.noupe.com/embed/019ef88240ad7fcebbd43804d761b41a3257.js'></script>""",
         height=0,
     )
+
 
     footer_home()

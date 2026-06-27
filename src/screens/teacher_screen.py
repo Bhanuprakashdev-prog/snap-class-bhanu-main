@@ -147,10 +147,21 @@ def teacher_tab_take_attendance():
         if st.button('Run Face Analysis', width='stretch', type='secondary', icon=':material/analytics:', disabled=not has_photos):
             with st.spinner('Deep scanning classroom photos...'):
                 all_detected_ids = {}
+                enrolled_res = supabase.table('subject_students').select("*, students(*)").eq('subject_id',selected_subject_id ).execute()
+                enrolled_students = enrolled_res.data
+                enrolled_student_ids = [
+                    int(node['students']['student_id'])
+                    for node in enrolled_students
+                    if node.get('students')
+                ]
 
                 for idx, img in enumerate(st.session_state.attendance_images):
                     img_np = np.array(img.convert('RGB'))
-                    detected, _, _ = predict_attendance(img_np)
+                    detected, _, _ = predict_attendance(
+                        img_np,
+                        allow_single_student=True,
+                        candidate_student_ids=enrolled_student_ids
+                    )
 
 
                     if detected:
@@ -159,10 +170,6 @@ def teacher_tab_take_attendance():
 
                             all_detected_ids.setdefault(student_id, []).append(f"Photo {idx+1}")
 
-                enrolled_res = supabase.table('subject_students').select("*, students(*)").eq('subject_id',selected_subject_id ).execute()
-                enrolled_students = enrolled_res.data
-
-                
                 results=[]
                 attendance_to_log = []
 
