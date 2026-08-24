@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapClass | Student Portal</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="flex items-center gap-4">
+            <h1 class="brand-title">SnapClass</h1>
+            <span class="badge" style="background: var(--periwinkle); color: var(--indigo);">Student Portal</span>
+        </div>
+        <a href="index.html" style="color: var(--text-muted); font-weight: 600; text-decoration: none;">&larr; Exit</a>
+    </header>
+
+    <div class="container" id="login-view">
+        <div class="card" style="max-width: 500px; margin: 0 auto; text-align: center;">
+            <h2 class="mb-2">FaceID Login</h2>
+            <div class="viewfinder mb-2">
+                <video id="student-video" autoplay muted playsinline></video>
+            </div>
+            
+            <div class="flex gap-2" style="justify-content: center;">
+                <button id="btn-start-cam" class="btn btn-secondary">Start Camera</button>
+                <button id="btn-login-scan" class="btn btn-primary" style="display: none;">Scan & Login</button>
+            </div>
+            
+            <div class="mt-4">
+                <p style="color: var(--text-muted); font-size: 0.9rem;">New student?</p>
+                <button onclick="document.getElementById('register-modal').classList.add('active')" class="btn" style="background: transparent; color: var(--blurple); text-decoration: underline;">Register Biometrics</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div id="register-modal" class="modal-overlay">
+        <div class="modal-content text-center">
+            <h3>Register Profile</h3>
+            <div class="input-group">
+                <input type="text" id="reg-name" placeholder="Full Name">
+            </div>
+            <div class="viewfinder mb-2">
+                <video id="reg-video" autoplay muted playsinline></video>
+            </div>
+            <div class="flex justify-between gap-2">
+                <button onclick="this.closest('.modal-overlay').classList.remove('active'); Camera.stop();" class="btn" style="background: #E2E8F0; color: #475569; flex:1;">Cancel</button>
+                <button id="btn-reg-start" class="btn btn-secondary" style="flex:1;">Start Camera</button>
+                <button id="btn-reg-capture" class="btn btn-primary" style="flex:1; display:none;">Register</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard View (Hidden initially) -->
+    <div class="container" id="dashboard-view" style="display: none;">
+        <h2 id="welcome-text">Welcome back!</h2>
+        
+        <div class="tabs">
+            <div class="tab active" data-target="tab-insights">My Insights</div>
+            <div class="tab" data-target="tab-subjects">My Subjects</div>
+        </div>
+        
+        <div class="tab-panes">
+            <!-- Insights Tab -->
+            <div id="tab-insights" class="tab-pane active">
+                <div class="grid-2">
+                    <div class="card text-center">
+                        <h3 style="color: var(--text-muted); font-size: 1rem;">Attendance Radar</h3>
+                        <div id="gauge-container" style="position: relative; width: 200px; height: 200px; margin: 0 auto;">
+                            <!-- SVG Gauge will be injected here -->
+                            <svg viewBox="0 0 36 36" style="width:100%; height:100%;">
+                                <path class="circle-bg"
+                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none" stroke="#E2E8F0" stroke-width="3" />
+                                <path id="gauge-path"
+                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none" stroke="var(--blurple)" stroke-width="3" stroke-dasharray="0, 100" />
+                                <text id="gauge-text" x="18" y="20.5" text-anchor="middle" font-size="8" font-weight="700" fill="var(--indigo)">0%</text>
+                            </svg>
+                        </div>
+                        <div id="radar-status" class="mt-1 badge">Status</div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>What-If Simulator</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Simulate future attendance.</p>
+                        <div class="mt-2">
+                            <label style="font-weight: 600;">Upcoming Classes to Skip:</label>
+                            <input type="range" id="sim-skip" min="0" max="10" value="0" style="width: 100%;">
+                            <div class="text-center" style="font-size: 1.5rem; font-weight: 800; color: var(--critical);" id="sim-val">0</div>
+                        </div>
+                        <div class="mt-2 p-2" style="background: var(--bg-color); border-radius: 0.5rem; text-align: center;">
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">Projected Percentage</span>
+                            <div style="font-size: 2rem; font-weight: 800; color: var(--indigo);" id="sim-result">--%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Subjects Tab -->
+            <div id="tab-subjects" class="tab-pane">
+                <div class="flex justify-between items-center mb-2">
+                    <h3>Enrolled Subjects</h3>
+                    <button class="btn btn-secondary" onclick="document.getElementById('enroll-modal').classList.add('active')">+ Join Class</button>
+                </div>
+                <div id="subjects-grid" class="grid-2">
+                    <!-- Dynamic subject cards -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Enroll Modal -->
+    <div id="enroll-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Join a Class</h3>
+            <div class="input-group mt-2">
+                <label>Join Code (Subject ID)</label>
+                <input type="number" id="join-subject-id" placeholder="e.g. 1">
+            </div>
+            <div class="flex gap-2">
+                <button onclick="this.closest('.modal-overlay').classList.remove('active');" class="btn" style="background: #E2E8F0; flex:1;">Cancel</button>
+                <button id="btn-enroll" class="btn btn-primary" style="flex:1;">Enroll</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic -->
+    <script src="js/api.js"></script>
+    <script src="js/camera.js"></script>
+    <script>
+        let currentStudentId = null;
+        let radarData = null;
+
+        // Login Logic
+        document.getElementById('btn-start-cam').addEventListener('click', async () => {
+            if(await Camera.start('student-video')) {
+                document.getElementById('btn-start-cam').style.display = 'none';
+                document.getElementById('btn-login-scan').style.display = 'inline-flex';
+            }
+        });
+
+        document.getElementById('btn-login-scan').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-login-scan');
+            btn.textContent = "Scanning...";
+            btn.disabled = true;
+
+            try {
+                const blob = await Camera.captureBlob('student-video');
+                const fd = new FormData();
+                fd.append('image', blob, 'face.jpg');
+                
+                const res = await SnapClassAPI.postForm('/auth/student/face-login', fd);
+                if (res.success) {
+                    currentStudentId = res.student_id;
+                    SnapClassAPI.showToast("Login Successful!");
+                    Camera.stop();
+                    document.getElementById('login-view').style.display = 'none';
+                    document.getElementById('dashboard-view').style.display = 'block';
+                    loadDashboard();
+                }
+            } catch (e) {
+                btn.textContent = "Scan & Login";
+                btn.disabled = false;
+            }
+        });
+        
+        // Registration Logic
+        document.getElementById('btn-reg-start').addEventListener('click', async () => {
+            if(await Camera.start('reg-video')) {
+                document.getElementById('btn-reg-start').style.display = 'none';
+                document.getElementById('btn-reg-capture').style.display = 'inline-flex';
+            }
+        });
+        
+        document.getElementById('btn-reg-capture').addEventListener('click', async () => {
+            const name = document.getElementById('reg-name').value;
+            if(!name) return SnapClassAPI.showToast("Enter your name", "error");
+            
+            const btn = document.getElementById('btn-reg-capture');
+            btn.textContent = "Processing...";
+            btn.disabled = true;
+            
+            try {
+                const blob = await Camera.captureBlob('reg-video');
+                const fd = new FormData();
+                fd.append('name', name);
+                fd.append('image', blob, 'face.jpg');
+                
+                const res = await SnapClassAPI.postForm('/auth/student/register', fd);
+                if (res.success) {
+                    SnapClassAPI.showToast("Registration Successful! Please login.");
+                    document.getElementById('register-modal').classList.remove('active');
+                    Camera.stop();
+                }
+            } catch(e) { } finally {
+                btn.textContent = "Register";
+                btn.disabled = false;
+            }
+        });
+        
+        // Dashboard Loading
+        async function loadDashboard() {
+            try {
+                const data = await SnapClassAPI.get(`/insights/student-radar/${currentStudentId}`);
+                radarData = data;
+                
+                if(data.risk_profile) {
+                    const pct = data.risk_profile.pct;
+                    document.getElementById('gauge-text').textContent = `${pct}%`;
+                    document.getElementById('gauge-path').setAttribute('stroke-dasharray', `${pct}, 100`);
+                    
+                    const statusEl = document.getElementById('radar-status');
+                    statusEl.textContent = data.risk_profile.label;
+                    
+                    if(data.risk_profile.tier === 'SAFE') {
+                        statusEl.className = 'mt-1 badge badge-safe';
+                        document.getElementById('gauge-path').setAttribute('stroke', 'var(--safe)');
+                    } else if(data.risk_profile.tier === 'AT RISK') {
+                        statusEl.className = 'mt-1 badge badge-warning';
+                        document.getElementById('gauge-path').setAttribute('stroke', 'var(--warning)');
+                    } else {
+                        statusEl.className = 'mt-1 badge badge-critical';
+                        document.getElementById('gauge-path').setAttribute('stroke', 'var(--critical)');
+                    }
+                    
+                    updateSimulator();
+                }
+                
+                loadSubjects();
+            } catch(e) {}
+        }
+        
+        // Simulator Logic
+        const simInput = document.getElementById('sim-skip');
+        simInput.addEventListener('input', updateSimulator);
+        
+        function updateSimulator() {
+            const skipCount = parseInt(simInput.value);
+            document.getElementById('sim-val').textContent = skipCount;
+            
+            if(!radarData || radarData.total_logs === 0) {
+                document.getElementById('sim-result').textContent = "--%";
+                return;
+            }
+            
+            // Reconstruct total and attended from current pct
+            const attended = (radarData.risk_profile.pct / 100) * radarData.total_logs;
+            const newTotal = radarData.total_logs + skipCount;
+            const newPct = (attended / newTotal) * 100;
+            
+            const resultEl = document.getElementById('sim-result');
+            resultEl.textContent = `${newPct.toFixed(1)}%`;
+            resultEl.style.color = newPct >= 75 ? 'var(--indigo)' : 'var(--critical)';
+        }
+        
+        async function loadSubjects() {
+            try {
+                const res = await SnapClassAPI.get(`/subjects/student/${currentStudentId}`);
+                const grid = document.getElementById('subjects-grid');
+                grid.innerHTML = '';
+                
+                res.data.forEach(sub => {
+                    const el = document.createElement('div');
+                    el.className = 'card';
+                    el.innerHTML = `
+                        <h4 style="margin-bottom: 0.25rem;">${sub.subjects.name}</h4>
+                        <span class="badge" style="background:#E2E8F0; color:#475569;">${sub.subjects.subject_code} - Sec ${sub.subjects.section}</span>
+                        <div class="mt-2 text-right">
+                            <button onclick="unenroll(${sub.subject_id})" class="btn" style="padding:0.4rem 0.8rem; background:transparent; color:var(--critical); text-decoration:underline;">Unenroll</button>
+                        </div>
+                    `;
+                    grid.appendChild(el);
+                });
+            } catch(e) {}
+        }
+        
+        // Enroll
+        document.getElementById('btn-enroll').addEventListener('click', async () => {
+            const sid = document.getElementById('join-subject-id').value;
+            if(!sid) return;
+            try {
+                await SnapClassAPI.postJson('/subjects/enroll', {student_id: currentStudentId, subject_id: parseInt(sid)});
+                SnapClassAPI.showToast("Enrolled Successfully");
+                document.getElementById('enroll-modal').classList.remove('active');
+                loadSubjects();
+            } catch(e) {}
+        });
+        
+        // Unenroll
+        window.unenroll = async (subjectId) => {
+            if(confirm("Are you sure you want to unenroll?")) {
+                try {
+                    await SnapClassAPI.request(`/subjects/unenroll?student_id=${currentStudentId}&subject_id=${subjectId}`, {method: 'DELETE'});
+                    SnapClassAPI.showToast("Unenrolled");
+                    loadSubjects();
+                } catch(e) {}
+            }
+        };
+    </script>
+</body>
+</html>

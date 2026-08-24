@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapClass | Admin Portal</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="flex items-center gap-4">
+            <h1 class="brand-title">SnapClass</h1>
+            <span class="badge" style="background: var(--indigo); color: white;">Admin Portal</span>
+        </div>
+        <a href="index.html" style="color: var(--text-muted); font-weight: 600; text-decoration: none;">&larr; Exit</a>
+    </header>
+
+    <div class="container">
+        <h2 class="mb-4">Institution Overview</h2>
+        
+        <!-- KPI Ribbon -->
+        <div class="grid-2 mb-4" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+            <div class="card text-center" style="padding: 1.5rem;">
+                <div style="font-size: 2.5rem; font-weight: 800; color: var(--blurple);" id="admin-students">0</div>
+                <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Total Students</div>
+            </div>
+            <div class="card text-center" style="padding: 1.5rem;">
+                <div style="font-size: 2.5rem; font-weight: 800; color: var(--pink);" id="admin-teachers">0</div>
+                <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Active Faculty</div>
+            </div>
+            <div class="card text-center" style="padding: 1.5rem;">
+                <div style="font-size: 2.5rem; font-weight: 800; color: var(--safe);" id="admin-subjects">0</div>
+                <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Total Courses</div>
+            </div>
+            <div class="card text-center" style="padding: 1.5rem;">
+                <div style="font-size: 2.5rem; font-weight: 800; color: var(--critical);" id="admin-defaulters-count">0</div>
+                <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Debarred Students (<75%)</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="flex justify-between items-center mb-2">
+                <h3>🚨 University Defaulter Roster</h3>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">Aggregated cross-subject records</span>
+            </div>
+            
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #E2E8F0;">
+                        <th style="padding: 1rem 0.5rem; color: var(--indigo);">Student</th>
+                        <th style="color: var(--indigo);">Course</th>
+                        <th style="color: var(--indigo);">Attendance %</th>
+                        <th style="color: var(--indigo);">Classes (Att/Tot)</th>
+                    </tr>
+                </thead>
+                <tbody id="defaulters-body">
+                    <tr><td colspan="4" class="text-center" style="padding: 2rem;">Loading institution data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Load KPIs
+                const overview = await SnapClassAPI.get('/admin/overview');
+                document.getElementById('admin-students').textContent = overview.total_students;
+                document.getElementById('admin-teachers').textContent = overview.total_teachers;
+                document.getElementById('admin-subjects').textContent = overview.total_subjects;
+                
+                // Load Defaulters
+                const def = await SnapClassAPI.get('/admin/defaulters');
+                document.getElementById('admin-defaulters-count').textContent = def.defaulters.length;
+                
+                const tbody = document.getElementById('defaulters-body');
+                tbody.innerHTML = '';
+                
+                if (def.defaulters.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center" style="padding: 2rem; font-weight: 600; color: var(--safe);">No debarred students! Everyone is above 75%. 🎉</td></tr>';
+                    return;
+                }
+                
+                def.defaulters.forEach(row => {
+                    tbody.innerHTML += `
+                        <tr style="border-bottom: 1px solid #F1F5F9;">
+                            <td style="padding: 1rem 0.5rem;">
+                                <div style="font-weight: 600;">${row.student_name}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">ID: ${row.student_id}</div>
+                            </td>
+                            <td style="font-weight: 600;">${row.subject}</td>
+                            <td>
+                                <span class="badge badge-critical">${row.attendance_pct}%</span>
+                            </td>
+                            <td style="font-size: 0.9rem; font-weight: 600; color: var(--text-muted);">
+                                ${row.attended_classes} / ${row.total_classes}
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (e) {
+                document.getElementById('defaulters-body').innerHTML = '<tr><td colspan="4" class="text-center" style="padding: 2rem; color: var(--critical);">Failed to load institution data. Check backend connection.</td></tr>';
+            }
+        });
+    </script>
+</body>
+</html>

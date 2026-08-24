@@ -13,22 +13,14 @@ def main():
         page_title='SnapClass - Making Attendance faster using AI',
         page_icon= "https://i.ibb.co/YTYGn5qV/logo.png"
     )
-    # Chatbot widget — inject into parent page DOM to bypass iframe limitation
-    components.html("""
-        <script>
-        (function() {
-            if (window.parent && window.parent.document) {
-                var existing = window.parent.document.getElementById('noupe-chatbot-script');
-                if (!existing) {
-                    var script = window.parent.document.createElement('script');
-                    script.id = 'noupe-chatbot-script';
-                    script.src = 'https://www.noupe.com/embed/019ef88240ad7fcebbd43804d761b41a3257.js';
-                    window.parent.document.body.appendChild(script);
-                }
-            }
-        })();
-        </script>
-    """, height=0)
+    # Chatbot widget — sandboxed iframe (T11)
+    components.html(
+        """<iframe src="https://www.noupe.com/embed/019ef88240ad7fcebbd43804d761b41a3257.js"
+            sandbox="allow-scripts allow-same-origin allow-popups"
+            style="border:none;width:60px;height:60px;position:fixed;bottom:20px;right:20px;">
+        </iframe>""",
+        height=0,
+    )
 
     if 'login_type' not in st.session_state:
         st.session_state['login_type'] = None

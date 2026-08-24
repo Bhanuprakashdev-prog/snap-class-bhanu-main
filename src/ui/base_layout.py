@@ -1,112 +1,128 @@
 import streamlit as st
 
 
-
 def style_background_home():
-
     st.markdown("""
         <style>
+        .stApp {
+            background-color: #5865F2 !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
-                .stApp {
-                    background: #5865F2 !important;
-                }
-
-                .stApp div[data-testid="stColumn"]{
-                    background-color:#E0E3FF !important;
-                    padding:2.5rem !important;
-                    border-radius: 5rem !important;
-                    }
-        </style>  
-
-                """
-            ,unsafe_allow_html=True)
-    
 
 def style_background_dashboard():
-
     st.markdown("""
         <style>
+        .stApp {
+            background-color: #E0E3FF !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
-                .stApp {
-                    background: #E0E3FF !important;
-                }
-
-        </style>  
-
-                """
-            ,unsafe_allow_html=True)
-    
-
-    
 
 def style_base_layout():
+    # Inject font <link> tags — must use <link>, not @import, when injecting into <body>
+    st.markdown("""
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Climate+Crisis:YEAR@1979&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    """, unsafe_allow_html=True)
+
     st.markdown("""
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Climate+Crisis:YEAR@1979&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
-                
-         /* Hide Top Bar of streamlit */
-                
-            #MainMenu, footer, header {
-                visibility: hidden;
-            }
-                
-            .block-container {
-                padding-top:1.5rem !important;    
-            }
+        /* Hide Streamlit chrome */
+        #MainMenu, footer, header {
+            visibility: hidden;
+            height: 0px;
+        }
 
-            h1 {
-                font-family: 'Climate Crisis', sans-serif !important;
-                font-size: 3.5rem !important;
-                line-height:1.1 1important;
-                margin-bottom:0rem !important;
-            }
-                
+        .block-container {
+            padding-top: 1.5rem !important;
+            padding-bottom: 2.5rem !important;
+        }
 
-            h2 {
-                font-family: 'Climate Crisis', sans-serif !important;
-                font-size: 2rem !important;
-                line-height:0.9 !important;
-                margin-bottom:0rem !important;
-            }
-                
-            h3, h4, p {
-                font-family: 'Outfit', sans-serif;    
-            }
-                
+        /* Typography — headings only, never span (Material Icons use span) */
+        h1 {
+            font-family: 'Climate Crisis', sans-serif !important;
+            font-size: 3.2rem !important;
+            line-height: 1.1 !important;
+            margin-bottom: 0rem !important;
+        }
 
-            button{
-                border-radius: 1.5rem !important;
-                background-color: #5865F2 !important;
-                color: white !important;
-                padding: 10px 20px !important;
-                border: none !important;
-                transition: transform 0.25s ease-in-out !important;
-                }
+        h2 {
+            font-family: 'Climate Crisis', sans-serif !important;
+            font-size: 2rem !important;
+            line-height: 1 !important;
+            margin-bottom: 0.5rem !important;
+        }
 
-            button[kind="secondary"]{
-                border-radius: 1.5rem !important;
-                background-color: #EB459E !important;
-                color: white !important;
-                padding: 10px 20px !important;
-                border: none !important;
-                transition: transform 0.25s ease-in-out !important;
-                }
+        /* NOTE: 'span' intentionally excluded — Material Symbols icons live in <span> */
+        h3, h4, p, div.stMarkdown, input, textarea, select, label {
+            font-family: 'Outfit', sans-serif !important;
+        }
 
-            button[kind="tertiary"]{
-                border-radius: 1.5rem !important;
-                background-color: black !important;
-                color: white !important;
-                padding: 10px 20px !important;
-                border: none !important;
-                transition: transform 0.25s ease-in-out !important;
-                }
+        /* ── BUTTONS: scoped to Streamlit button wrappers ONLY ──
+           Do NOT use button {} globally — it overrides the camera
+           capture button, dialog close x, and other internal controls. */
+        div[data-testid="stBaseButton-primary"] > button,
+        div[data-testid="stBaseButton-secondary"] > button,
+        div[data-testid="stBaseButton-tertiary"] > button {
+            border-radius: 1.5rem !important;
+            padding: 10px 24px !important;
+            border: none !important;
+            font-family: 'Outfit', sans-serif !important;
+            font-weight: 700 !important;
+            transition: transform 0.15s ease-in-out !important;
+        }
 
-            button:hover{
-                transform :scale(1.05)}
-        </style>  
+        div[data-testid="stBaseButton-primary"] > button:hover,
+        div[data-testid="stBaseButton-secondary"] > button:hover,
+        div[data-testid="stBaseButton-tertiary"] > button:hover {
+            transform: scale(1.03) !important;
+        }
 
-                """
-            ,unsafe_allow_html=True)
-    
+        div[data-testid="stBaseButton-primary"] > button {
+            background-color: #5865F2 !important;
+            color: #FFFFFF !important;
+        }
+
+        div[data-testid="stBaseButton-secondary"] > button {
+            background-color: #EB459E !important;
+            color: #FFFFFF !important;
+        }
+
+        div[data-testid="stBaseButton-tertiary"] > button {
+            background-color: #1E1B4B !important;
+            color: #FFFFFF !important;
+        }
+
+        /* ── CAMERA INPUT ──
+           4:3 aspect ratio so mobile/desktop both show the same cropped frame.
+           object-fit:cover ensures the visible frame matches what gets captured.
+           NO scaleX(-1) — browser already mirrors front cameras by default.
+           Adding it would double-flip the feed making it backwards. */
+        div[data-testid="stCameraInput"] {
+            border-radius: 1rem !important;
+            overflow: hidden !important;
+            width: 100% !important;
+            aspect-ratio: 4 / 3 !important;
+            background-color: #000 !important;
+        }
+
+        div[data-testid="stCameraInput"] video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 0 !important;
+        }
+
+        div[data-testid="stCameraInput"] canvas {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 0 !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)

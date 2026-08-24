@@ -1,4 +1,6 @@
 streamlit
+streamlit-autorefresh
+
 # Utilitites 
 numpy
 pandas
@@ -9,16 +11,11 @@ dlib-bin
 git+https://github.com/ageitgey/face_recognition_models
 setuptools<70.0.0
 
-
 supabase
 bcrypt
 
-
-
 segno
 pillow
-
-
 
 librosa
 resemblyzer

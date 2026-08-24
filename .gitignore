@@ -1,0 +1,47 @@
+# ── Secrets & Environment ─────────────────────────────────────────────────────
+.streamlit/secrets.toml
+.env
+*.env.*
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Virtual Environments ──────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# ── dlib / ML model caches ────────────────────────────────────────────────────
+*.dat
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.pth
+models/
+
+# ── IDE & OS ──────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs & Temp ───────────────────────────────────────────────────────────────
+*.log
+tmp/
+temp/
+.cache/
