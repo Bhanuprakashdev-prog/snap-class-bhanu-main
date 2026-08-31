@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SnapClass | Student Biometric Hub</title>
+  <title>SnapClass | Student Portal & Attendance Recovery Intelligence</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <header>
     <div style="display: flex; align-items: center; gap: 0.75rem;">
-      <a href="index.html" class="brand-title" style="text-decoration: none;">SnapClass</a>
-      <span class="badge badge-primary">Student Portal</span>
+      <a href="index.html" class="brand-title">SnapClass</a>
+      <span class="badge badge-primary">Student Intelligence Hub</span>
     </div>
     <a href="index.html" class="nav-link-btn">&larr; Back to Portals</a>
   </header>
@@ -18,74 +18,56 @@
   <main class="container">
     
     <!-- LOGIN / CHECK-IN SCREEN -->
-    <div id="student-login-view" class="animate-fade-in" style="max-width: 540px; margin: 0 auto;">
-      <div class="glass-card" style="text-align: center;">
+    <div id="student-login-view" style="max-width: 500px; margin: 1.5rem auto;">
+      <div class="card" style="text-align: center;">
         
-        <div style="margin-bottom: 1.5rem;">
-          <span class="badge badge-pink" style="margin-bottom: 0.5rem;">Biometric Security</span>
-          <h2 style="font-size: 1.85rem; margin-bottom: 0.25rem;">FaceID Check-In</h2>
-          <p style="color: var(--text-muted); font-size: 0.9rem;">Look into the camera viewfinder to verify identity.</p>
+        <div style="margin-bottom: 1.25rem;">
+          <span class="badge badge-primary" style="margin-bottom: 0.4rem;">Biometric Roll-Call</span>
+          <h2 style="font-size: 1.6rem; margin-bottom: 0.2rem;">FaceID Verification</h2>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">Look into the 4:3 viewfinder to verify your attendance.</p>
         </div>
 
         <!-- Alert Banner for Errors -->
         <div id="login-alert-banner" class="alert-banner alert-error"></div>
 
-        <!-- Camera Viewfinder with Cyberpunk HUD -->
-        <div class="camera-container" style="margin-bottom: 1.5rem;">
+        <!-- Camera Viewfinder (4:3) -->
+        <div class="camera-container" style="margin-bottom: 1.25rem;">
           <video id="student-video" autoplay muted playsinline></video>
           
           <div class="camera-placeholder" id="student-cam-placeholder">
-            <div style="font-size: 3rem; opacity: 0.6;">📷</div>
-            <div style="font-size: 0.95rem; font-weight: 600;">Camera Idle</div>
-            <div style="font-size: 0.8rem; color: var(--text-dim);">Tap below to initialize 4:3 WebRTC stream</div>
+            <div style="font-size: 2.5rem; color: var(--text-light);">📷</div>
+            <div style="font-size: 0.92rem; font-weight: 600; color: #FFFFFF;">Camera Idle</div>
+            <div style="font-size: 0.8rem; color: #94A3B8;">Click "Start Camera" below to initialize 4:3 stream</div>
           </div>
 
           <div class="camera-hud" style="display: none;">
-            <div class="hud-corner-tl"></div>
-            <div class="hud-corner-tr"></div>
-            <div class="hud-corner-bl"></div>
-            <div class="hud-corner-br"></div>
             <div class="hud-face-oval"></div>
-            <div class="hud-scan-line"></div>
-            
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-              <span class="badge badge-safe" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);">
-                <span class="pulse-dot"></span> 4:3 Live Stream
+              <span class="badge badge-safe" style="background: rgba(15,23,42,0.85); color:#34D399;">
+                <span class="pulse-dot"></span> 4:3 Live
               </span>
-              <span class="badge badge-primary" style="background: rgba(0,0,0,0.6);">AI Ready</span>
+              <span class="badge badge-primary" style="background: rgba(15,23,42,0.85);">AI Ready</span>
             </div>
-
-            <div style="text-align: center; color: var(--accent-cyan); font-size: 0.8rem; font-weight: 600; text-shadow: 0 0 8px rgba(6,182,212,0.8);">
-              [ ALIGN FACE INSIDE OVAL ]
+            <div style="text-align: center; color: #FFFFFF; font-size: 0.78rem; font-weight: 600; background: rgba(15,23,42,0.6); padding: 2px 8px; border-radius: 4px; align-self: center;">
+              Align Face Inside Oval
             </div>
-          </div>
-        </div>
-
-        <!-- Dynamic QR Passcode Option (Optional) -->
-        <div class="input-group" style="margin-bottom: 1.25rem;">
-          <label class="input-label" for="qr-passcode-input">
-            <span>QR Passcode (Optional)</span>
-            <span style="font-size: 0.75rem; color: var(--text-dim);">If teacher is running Live QR</span>
-          </label>
-          <div class="input-field-wrapper">
-            <input type="text" id="qr-passcode-input" class="input-control" placeholder="e.g. 9b7f1a0c4e" style="letter-spacing: 0.1em; font-family: monospace;">
           </div>
         </div>
 
         <!-- Action Buttons -->
         <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
-          <button id="btn-start-student-cam" class="btn btn-secondary" style="flex: 1; min-width: 160px;">
+          <button id="btn-start-student-cam" class="btn btn-secondary" style="flex: 1; min-width: 150px;">
             <span>📸 Start Camera</span>
           </button>
-          <button id="btn-verify-face" class="btn btn-primary" style="flex: 1; min-width: 160px; display: none;">
+          <button id="btn-verify-face" class="btn btn-primary" style="flex: 1; min-width: 150px; display: none;">
             <span>⚡ Verify & Login</span>
           </button>
         </div>
 
-        <!-- New Profile Registration Link -->
-        <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-glass);">
-          <span style="color: var(--text-muted); font-size: 0.88rem;">First time here?</span>
-          <button id="btn-open-register" class="btn btn-sm" style="background: transparent; color: var(--accent-cyan); font-weight: 700; text-decoration: underline; cursor: pointer;">
+        <!-- Registration Link -->
+        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-light);">
+          <span style="color: var(--text-muted); font-size: 0.85rem;">New student?</span>
+          <button id="btn-open-register" class="btn btn-sm" style="background: transparent; color: var(--primary); font-weight: 700; text-decoration: underline; cursor: pointer;">
             Register Biometrics
           </button>
         </div>
@@ -96,64 +78,59 @@
     <!-- REGISTRATION MODAL -->
     <div id="register-modal" class="modal-backdrop">
       <div class="modal-window">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-          <h3 style="font-size: 1.35rem;">Register New Biometrics</h3>
-          <button id="btn-close-register" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">×</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-size: 1.25rem;">Register Student Biometrics</h3>
+          <button id="btn-close-register" style="background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer;">×</button>
         </div>
 
         <div id="reg-alert-banner" class="alert-banner alert-error"></div>
 
         <div class="input-group">
-          <label class="input-label" for="reg-full-name">
-            <span>Student Full Name</span>
-            <span style="color: var(--critical);">*</span>
-          </label>
-          <input type="text" id="reg-full-name" class="input-control" placeholder="e.g. Alex Johnson">
+          <label class="input-label" for="reg-full-name">Full Name</label>
+          <input type="text" id="reg-full-name" class="input-control" placeholder="e.g. Alex Johnson" required>
         </div>
 
-        <div class="camera-container" style="max-height: 240px; margin-bottom: 1.25rem;">
+        <div class="camera-container" style="max-height: 220px; margin-bottom: 1.1rem;">
           <video id="reg-video" autoplay muted playsinline></video>
           <div class="camera-placeholder" id="reg-cam-placeholder">
-            <div style="font-size: 2rem;">👤</div>
-            <div style="font-size: 0.85rem;">Camera Ready</div>
+            <div style="font-size: 2rem; color: var(--text-light);">👤</div>
+            <div style="font-size: 0.82rem; color: #FFFFFF;">Camera Inactive</div>
           </div>
           <div class="camera-hud" style="display: none;">
-            <div class="hud-corner-tl"></div>
-            <div class="hud-corner-tr"></div>
-            <div class="hud-corner-bl"></div>
-            <div class="hud-corner-br"></div>
-            <div class="hud-face-oval" style="width: 140px; height: 180px;"></div>
-            <div class="hud-scan-line"></div>
+            <div class="hud-face-oval" style="width: 130px; height: 160px;"></div>
           </div>
         </div>
 
-        <div style="display: flex; gap: 0.75rem;">
+        <div style="display: flex; gap: 0.6rem;">
           <button id="btn-start-reg-cam" class="btn btn-secondary" style="flex: 1;">Start Camera</button>
           <button id="btn-capture-reg" class="btn btn-primary" style="flex: 1; display: none;">Capture & Register</button>
         </div>
       </div>
     </div>
 
-    <!-- STUDENT DASHBOARD -->
-    <div id="student-dashboard" class="animate-fade-in" style="display: none;">
+    <!-- STUDENT DASHBOARD (AUTHENTICATED) -->
+    <div id="student-dashboard" style="display: none;">
       
       <!-- Top Welcome Banner -->
-      <div class="glass-card" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div class="card" style="margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <div>
-          <span class="badge badge-safe" style="margin-bottom: 0.4rem;">
-            <span class="pulse-dot"></span> Verified Session
+          <span class="badge badge-safe" style="margin-bottom: 0.25rem;">
+            <span class="pulse-dot"></span> Active Session
           </span>
-          <h2 id="dash-student-name" style="font-size: 1.8rem; margin: 0;">Welcome, Student</h2>
-          <div id="dash-student-id-tag" style="color: var(--text-muted); font-size: 0.85rem; font-family: monospace;">ID: #000</div>
+          <h2 id="dash-student-name" style="font-size: 1.6rem; margin: 0;">Welcome, Student</h2>
+          <div id="dash-student-id-tag" style="color: var(--text-muted); font-size: 0.82rem; font-family: monospace;">ID: #000</div>
         </div>
         <button id="btn-student-logout" class="btn btn-secondary btn-sm">Sign Out</button>
       </div>
 
-      <!-- Dashboard Tabs -->
-      <div class="glass-card">
+      <!-- Dashboard Tabs (4 Tabs) -->
+      <div class="card">
         <div class="tabs-header">
           <button class="tab-btn active" data-target="tab-radar">
             <span>📊</span> Attendance Radar
+          </button>
+          <button class="tab-btn" data-target="tab-recovery">
+            <span>🎯</span> Recovery Calculator
           </button>
           <button class="tab-btn" data-target="tab-simulator">
             <span>🔮</span> What-If Simulator
@@ -163,13 +140,13 @@
           </button>
         </div>
 
-        <!-- 1. Radar & Analytics Tab -->
+        <!-- 1. Radar & Standing Tab -->
         <div id="tab-radar" class="tab-pane active">
           <div class="grid-cards">
             
             <!-- Circular Attendance Gauge -->
-            <div class="glass-card" style="text-align: center; background: rgba(15,23,42,0.5);">
-              <h3 style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.25rem;">Cumulative Standing</h3>
+            <div class="card" style="text-align: center; background: var(--surface-subtle); box-shadow: none;">
+              <h3 style="font-size: 1rem; color: var(--text-muted); margin-bottom: 1rem;">Cumulative Standing</h3>
               
               <div class="radial-meter-box">
                 <svg viewBox="0 0 200 200">
@@ -178,35 +155,35 @@
                 </svg>
                 <div class="meter-value-overlay">
                   <div id="meter-pct-text" class="meter-percentage">0%</div>
-                  <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; margin-top: 2px;">Overall Rate</div>
+                  <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Overall Rate</div>
                 </div>
               </div>
 
-              <div style="margin-top: 1.5rem;">
+              <div style="margin-top: 1.25rem;">
                 <span id="tier-badge" class="badge badge-safe">Calculating...</span>
-                <p id="tier-recommendation" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.75rem; line-height: 1.4;"></p>
+                <p id="tier-recommendation" style="color: var(--text-muted); font-size: 0.84rem; margin-top: 0.5rem; line-height: 1.4;"></p>
               </div>
             </div>
 
             <!-- Habit & Streak Breakdown -->
-            <div class="glass-card" style="background: rgba(15,23,42,0.5); display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="card" style="background: var(--surface-subtle); box-shadow: none; display: flex; flex-direction: column; justify-content: space-between;">
               <div>
-                <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Habit & Streak Intelligence</h3>
+                <h3 style="font-size: 1rem; margin-bottom: 0.85rem;">Attendance Intelligence</h3>
                 
-                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
-                  <div style="flex: 1; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1rem; text-align: center;">
-                    <div style="font-size: 1.8rem; font-weight: 800; color: #F59E0B;" id="stat-streak-val">0</div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">🔥 Perfect Streak</div>
+                <div style="display: flex; gap: 0.75rem; margin-bottom: 1.25rem;">
+                  <div style="flex: 1; background: #FFFFFF; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 0.85rem; text-align: center;">
+                    <div style="font-size: 1.6rem; font-weight: 800; color: var(--status-warning);" id="stat-streak-val">0</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">🔥 Streak</div>
                   </div>
-                  <div style="flex: 1; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1rem; text-align: center;">
-                    <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-cyan);" id="stat-safe-skips">0</div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">🛡️ Safe Skips Left</div>
+                  <div style="flex: 1; background: #FFFFFF; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 0.85rem; text-align: center;">
+                    <div style="font-size: 1.6rem; font-weight: 800; color: var(--primary);" id="stat-safe-skips">0</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">🛡️ Safe Skips</div>
                   </div>
                 </div>
 
-                <h4 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Day-of-Week Breakdown</h4>
-                <div id="habit-bars-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
-                  <div style="color: var(--text-dim); font-size: 0.85rem;">No historical classes logged yet.</div>
+                <h4 style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Day-of-Week Breakdown</h4>
+                <div id="habit-bars-list" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                  <div style="color: var(--text-muted); font-size: 0.82rem;">No attendance logged yet.</div>
                 </div>
               </div>
             </div>
@@ -214,50 +191,101 @@
           </div>
         </div>
 
-        <!-- 2. What-If Simulator Tab -->
+        <!-- 2. Attendance Recovery Calculator Tab (AttendSmartly Inspired) -->
+        <div id="tab-recovery" class="tab-pane">
+          
+          <!-- Recovery Roadmap Banner -->
+          <div class="card" style="background: var(--surface-subtle); border-left: 4px solid var(--primary); margin-bottom: 1.25rem; box-shadow: none;">
+            <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem;">🎯 Personalized Attendance Recovery Roadmap</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
+              Mathematical target calculation to meet university examination criteria.
+            </p>
+            
+            <div class="grid-cards" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+              <div style="background: #FFFFFF; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-light); text-align: center;">
+                <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">To Reach 75% (Min Exam Eligibility)</div>
+                <div id="recovery-75-val" style="font-size: 2rem; font-weight: 800; color: var(--primary); margin: 0.25rem 0;">0</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);" id="recovery-75-desc">Consecutive classes needed</div>
+              </div>
+
+              <div style="background: #FFFFFF; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-light); text-align: center;">
+                <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">To Reach 85% (Safe Honors Standing)</div>
+                <div id="recovery-85-val" style="font-size: 2rem; font-weight: 800; color: var(--status-safe); margin: 0.25rem 0;">0</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);" id="recovery-85-desc">Consecutive classes needed</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subject-by-Subject Recovery Status Grid -->
+          <div style="margin-bottom: 1rem;">
+            <h4 style="font-size: 1.05rem; margin-bottom: 0.75rem;">Subject-Wise Recovery Breakdown</h4>
+            <div id="subject-recovery-grid" class="grid-cards"></div>
+          </div>
+
+          <!-- Recent Check-In History -->
+          <div style="margin-top: 1.5rem;">
+            <h4 style="font-size: 1.05rem; margin-bottom: 0.75rem;">Recent Roll-Call Verification History</h4>
+            <div class="data-table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Subject Course</th>
+                    <th>Date & Time</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="student-history-tbody">
+                  <tr><td colspan="4" style="text-align:center; padding:1.5rem; color:var(--text-muted);">Loading verification records...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 3. What-If Simulator Tab -->
         <div id="tab-simulator" class="tab-pane">
-          <div class="glass-card" style="max-width: 640px; margin: 0 auto; background: rgba(15,23,42,0.5);">
-            <div style="text-align: center; margin-bottom: 1.5rem;">
-              <span class="badge badge-pink">Predictive AI Model</span>
-              <h3 style="font-size: 1.5rem; margin-top: 0.5rem;">"What-If" Absence Simulator</h3>
-              <p style="color: var(--text-muted); font-size: 0.9rem;">Test future absences to see how your standing responds.</p>
+          <div class="card" style="max-width: 580px; margin: 0 auto; background: var(--surface-subtle); box-shadow: none;">
+            <div style="text-align: center; margin-bottom: 1.25rem;">
+              <span class="badge badge-primary">Predictive Model</span>
+              <h3 style="font-size: 1.35rem; margin-top: 0.35rem;">"What-If" Absence Simulator</h3>
+              <p style="color: var(--text-muted); font-size: 0.85rem;">Simulate missed classes to project your eligibility standing.</p>
             </div>
 
-            <div class="range-slider-container">
-              <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 0.5rem;">
-                <span>Classes to Miss in Future:</span>
-                <span id="slider-skip-display" style="color: var(--accent-pink); font-size: 1.25rem;">0</span>
+            <div style="margin: 1.25rem 0;">
+              <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">
+                <span>Future Classes to Miss:</span>
+                <span id="slider-skip-display" style="color: var(--primary); font-size: 1.15rem;">0</span>
               </div>
               <input type="range" id="sim-skip-slider" min="0" max="12" value="0">
-              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem;">
-                <span>0 absences</span>
-                <span>6 absences</span>
-                <span>12 absences</span>
+              <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">
+                <span>0</span>
+                <span>6</span>
+                <span>12</span>
               </div>
             </div>
 
             <!-- Projection Display -->
-            <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; margin-top: 1.5rem;">
-              <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Simulated Attendance Rate</div>
-              <div id="sim-projected-pct" style="font-size: 3rem; font-weight: 900; font-family: 'Outfit', sans-serif; color: var(--safe); margin: 0.25rem 0;">--%</div>
+            <div style="background: #FFFFFF; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.25rem; text-align: center; margin-top: 1.25rem;">
+              <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Projected Rate</div>
+              <div id="sim-projected-pct" style="font-size: 2.6rem; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--status-safe); margin: 0.2rem 0;">--%</div>
               <div id="sim-projected-alert" class="badge badge-safe">Safe Standing (>75%)</div>
             </div>
           </div>
         </div>
 
-        <!-- 3. Enrolled Courses Tab -->
+        <!-- 4. Enrolled Courses Tab -->
         <div id="tab-courses" class="tab-pane">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.6rem;">
             <div>
-              <h3 style="font-size: 1.25rem;">My Subjects Roster</h3>
-              <p style="color: var(--text-muted); font-size: 0.85rem;">Enrolled courses and session statistics</p>
+              <h3 style="font-size: 1.15rem;">My Enrolled Courses</h3>
+              <p style="color: var(--text-muted); font-size: 0.82rem;">Manage active course rosters</p>
             </div>
             <button id="btn-open-join-modal" class="btn btn-primary btn-sm">+ Join New Class</button>
           </div>
 
-          <div id="courses-grid" class="grid-cards">
-            <!-- Dynamic Subject Cards -->
-          </div>
+          <div id="courses-grid" class="grid-cards"></div>
         </div>
 
       </div>
@@ -266,24 +294,21 @@
     <!-- JOIN SUBJECT MODAL -->
     <div id="join-modal" class="modal-backdrop">
       <div class="modal-window">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-          <h3 style="font-size: 1.35rem;">Join Class via Code</h3>
-          <button id="btn-close-join" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">×</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-size: 1.25rem;">Join Class via Code</h3>
+          <button id="btn-close-join" style="background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer;">×</button>
         </div>
 
         <div id="join-alert-banner" class="alert-banner alert-error"></div>
 
         <div class="input-group">
-          <label class="input-label" for="join-subject-code-input">
-            <span>Course ID / Subject Code</span>
-            <span style="color: var(--critical);">*</span>
-          </label>
+          <label class="input-label" for="join-subject-code-input">Course ID</label>
           <input type="number" id="join-subject-code-input" class="input-control" placeholder="e.g. 1" required>
         </div>
 
-        <div style="display: flex; gap: 0.75rem;">
+        <div style="display: flex; gap: 0.6rem; margin-top: 1rem;">
           <button id="btn-cancel-join" class="btn btn-secondary" style="flex: 1;">Cancel</button>
-          <button id="btn-submit-enroll" class="btn btn-primary" style="flex: 1;">Confirm Enrollment</button>
+          <button id="btn-submit-enroll" class="btn btn-primary" style="flex: 1;">Enroll</button>
         </div>
       </div>
     </div>
@@ -296,7 +321,7 @@
     let activeStudentId = null;
     let studentRadarCache = null;
 
-    // --- Biometric Login Workflow ---
+    // Login
     const btnStartCam = document.getElementById('btn-start-student-cam');
     const btnVerifyFace = document.getElementById('btn-verify-face');
 
@@ -317,21 +342,12 @@
 
       try {
         const imageBlob = await CameraEngine.captureBlob('student-video');
-        if (!imageBlob) throw new Error('Failed to capture frame from camera.');
+        if (!imageBlob) throw new Error('Could not capture frame from camera.');
 
         const formData = new FormData();
         formData.append('image', imageBlob, 'frame.jpg');
 
-        const qrCode = document.getElementById('qr-passcode-input').value.trim();
-        let res;
-
-        // If QR passcode provided, verify directly against QR endpoint
-        if (qrCode) {
-          // You could pass subject_id if known or let the face login handle it
-          res = await SnapClass.postForm('/auth/student/face-login', formData);
-        } else {
-          res = await SnapClass.postForm('/auth/student/face-login', formData);
-        }
+        const res = await SnapClass.postForm('/auth/student/face-login', formData);
 
         if (res.success && res.student_id) {
           activeStudentId = res.student_id;
@@ -342,19 +358,16 @@
           loadStudentDashboard();
         }
       } catch (err) {
-        SnapClass.showAlert('login-alert-banner', err.message || 'Face not recognized. Ensure good lighting.', 'error');
+        SnapClass.showAlert('login-alert-banner', err.message || 'Face not recognized.', 'error');
         SnapClass.showToast(err.message || 'Face verification failed', 'error');
       } finally {
         SnapClass.setLoading(btnVerifyFace, false, '⚡ Verify & Login');
       }
     });
 
-    // --- Biometric Registration Modal ---
+    // Registration
     const regModal = document.getElementById('register-modal');
-    document.getElementById('btn-open-register').addEventListener('click', () => {
-      regModal.classList.add('active');
-    });
-
+    document.getElementById('btn-open-register').addEventListener('click', () => regModal.classList.add('active'));
     document.getElementById('btn-close-register').addEventListener('click', () => {
       regModal.classList.remove('active');
       CameraEngine.stop();
@@ -402,7 +415,7 @@
       }
     });
 
-    // --- Student Dashboard & Analytics Loading ---
+    // Dashboard
     async function loadStudentDashboard() {
       if (!activeStudentId) return;
 
@@ -421,36 +434,32 @@
         const pct = radar.risk_profile ? radar.risk_profile.pct : 100;
         pctText.textContent = `${pct}%`;
 
-        // SVG Stroke calculation (circumference = 565.48)
         const circumference = 2 * Math.PI * 90;
         const offset = circumference - (pct / 100) * circumference;
         fillStroke.style.strokeDashoffset = offset;
 
-        // Color coding
         if (pct >= 85) {
-          fillStroke.style.stroke = 'var(--safe)';
+          fillStroke.style.stroke = 'var(--status-safe)';
           tierBadge.className = 'badge badge-safe';
-          tierBadge.textContent = '🟢 Safe Standing';
+          tierBadge.textContent = 'Safe Standing';
         } else if (pct >= 75) {
-          fillStroke.style.stroke = 'var(--warning)';
+          fillStroke.style.stroke = 'var(--status-warning)';
           tierBadge.className = 'badge badge-warning';
-          tierBadge.textContent = '🟡 At Risk Warning';
+          tierBadge.textContent = 'At Risk Warning';
         } else {
-          fillStroke.style.stroke = 'var(--critical)';
+          fillStroke.style.stroke = 'var(--status-critical)';
           tierBadge.className = 'badge badge-critical';
-          tierBadge.textContent = '🔴 Debarred Critical';
+          tierBadge.textContent = 'Debarred Critical';
         }
 
-        recText.textContent = radar.risk_profile ? radar.risk_profile.recommendation : 'Keep up consistent attendance!';
+        recText.textContent = radar.risk_profile ? radar.risk_profile.recommendation : 'Consistent attendance maintained.';
         document.getElementById('stat-streak-val').textContent = `${radar.streak || 0} classes`;
 
-        // Safe Skips Calculation
         const totalLogs = radar.total_logs || 0;
         const attended = radar.risk_profile ? (radar.risk_profile.pct / 100) * totalLogs : 0;
         let safeSkips = Math.max(0, Math.floor((attended - 0.75 * totalLogs) / 0.75));
         document.getElementById('stat-safe-skips').textContent = `${safeSkips} sessions`;
 
-        // Habit Breakdown
         const habitContainer = document.getElementById('habit-bars-list');
         if (radar.habits && radar.habits.length > 0) {
           habitContainer.innerHTML = '';
@@ -459,20 +468,21 @@
             row.style.display = 'flex';
             row.style.justifyContent = 'space-between';
             row.style.alignItems = 'center';
-            row.style.fontSize = '0.85rem';
+            row.style.fontSize = '0.82rem';
             row.innerHTML = `
               <span style="color: var(--text-muted);">${h.day}</span>
               <div style="display:flex; align-items:center; gap:0.5rem;">
-                <div style="width:100px; height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden;">
+                <div style="width:90px; height:6px; background:#E2E8F0; border-radius:3px; overflow:hidden;">
                   <div style="width:${h.pct}%; height:100%; background:var(--primary);"></div>
                 </div>
-                <span style="font-weight:700; color:var(--text-main);">${h.pct}%</span>
+                <span style="font-weight:700; color:var(--text-heading);">${h.pct}%</span>
               </div>
             `;
             habitContainer.appendChild(row);
           });
         }
 
+        await loadRecoveryRoadmap();
         updateSimulator();
         loadStudentCourses();
       } catch (err) {
@@ -480,7 +490,71 @@
       }
     }
 
-    // --- What-If Simulator ---
+    // Recovery Calculator Loading
+    async function loadRecoveryRoadmap() {
+      try {
+        const rec = await SnapClass.get(`/insights/student-recovery/${activeStudentId}`);
+        if (!rec.success) return;
+
+        // Banner stats
+        const n75 = rec.needed_for_75 || 0;
+        const n85 = rec.needed_for_85 || 0;
+
+        document.getElementById('recovery-75-val').textContent = n75 === 0 ? 'Safe ✅' : `${n75} Classes`;
+        document.getElementById('recovery-75-desc').textContent = n75 === 0 ? 'You currently satisfy 75%' : 'Consecutive classes needed without absence';
+
+        document.getElementById('recovery-85-val').textContent = n85 === 0 ? 'Achieved 🏆' : `${n85} Classes`;
+        document.getElementById('recovery-85-desc').textContent = n85 === 0 ? 'You are above 85% standing' : 'Consecutive classes needed for Honors';
+
+        // Subject Breakdown Grid
+        const grid = document.getElementById('subject-recovery-grid');
+        grid.innerHTML = '';
+
+        if (!rec.subject_cards || rec.subject_cards.length === 0) {
+          grid.innerHTML = '<div class="card" style="grid-column:1/-1; text-align:center; color:var(--text-muted);">No subject attendance records found.</div>';
+        } else {
+          rec.subject_cards.forEach(sub => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                <span class="badge badge-primary">${sub.subject_code}</span>
+                <span class="badge ${sub.status === 'SAFE' ? 'badge-safe' : (sub.status === 'WARNING' ? 'badge-warning' : 'badge-critical')}">${sub.status}</span>
+              </div>
+              <h4 style="font-size: 1.05rem; margin-bottom: 0.35rem;">${sub.subject_name}</h4>
+              <div style="font-size: 1.4rem; font-weight: 800; color: var(--text-heading); margin-bottom: 0.5rem;">
+                ${sub.attendance_pct}% <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">(${sub.attended_classes}/${sub.total_classes})</span>
+              </div>
+              <div style="background: var(--surface-subtle); padding: 0.5rem; border-radius: var(--radius-sm); font-size: 0.78rem; color: var(--text-muted);">
+                ${sub.classes_needed > 0 ? `🚨 Need <strong>${sub.classes_needed}</strong> classes for 75%` : `🛡️ <strong>${sub.safe_skips}</strong> safe skips remaining`}
+              </div>
+            `;
+            grid.appendChild(card);
+          });
+        }
+
+        // Recent History
+        const tbody = document.getElementById('student-history-tbody');
+        tbody.innerHTML = '';
+        if (!rec.recent_history || rec.recent_history.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:1rem;">No check-ins logged yet.</td></tr>';
+        } else {
+          rec.recent_history.forEach(h => {
+            const dtStr = h.timestamp ? new Date(h.timestamp).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : 'Recent';
+            tbody.innerHTML += `
+              <tr>
+                <td><strong>${h.subject_name}</strong> (${h.subject_code})</td>
+                <td>${dtStr}</td>
+                <td>${h.method}</td>
+                <td><span class="badge ${h.is_present ? 'badge-safe' : 'badge-critical'}">${h.is_present ? 'Present' : 'Absent'}</span></td>
+              </tr>
+            `;
+          });
+        }
+      } catch (e) {}
+    }
+
+    // Simulator
     const simSlider = document.getElementById('sim-skip-slider');
     simSlider.addEventListener('input', updateSimulator);
 
@@ -504,21 +578,21 @@
       pctEl.textContent = `${newPct.toFixed(1)}%`;
 
       if (newPct >= 85) {
-        pctEl.style.color = 'var(--safe)';
+        pctEl.style.color = 'var(--status-safe)';
         alertEl.className = 'badge badge-safe';
         alertEl.textContent = 'Safe Standing (≥85%)';
       } else if (newPct >= 75) {
-        pctEl.style.color = 'var(--warning)';
+        pctEl.style.color = 'var(--status-warning)';
         alertEl.className = 'badge badge-warning';
         alertEl.textContent = 'At-Risk Warning (75%-84%)';
       } else {
-        pctEl.style.color = 'var(--critical)';
+        pctEl.style.color = 'var(--status-critical)';
         alertEl.className = 'badge badge-critical';
-        alertEl.textContent = '🚨 Debarred from Exams (<75%)';
+        alertEl.textContent = 'Debarred from Exams (<75%)';
       }
     }
 
-    // --- Courses Roster ---
+    // Courses
     async function loadStudentCourses() {
       try {
         const res = await SnapClass.get(`/subjects/student/${activeStudentId}`);
@@ -526,21 +600,21 @@
         grid.innerHTML = '';
 
         if (!res.data || res.data.length === 0) {
-          grid.innerHTML = `<div class="glass-card" style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No enrolled courses. Click "+ Join New Class" to get started!</div>`;
+          grid.innerHTML = `<div class="card" style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No enrolled courses yet. Join with a Course ID code!</div>`;
           return;
         }
 
         res.data.forEach(item => {
           const sub = item.subjects;
           const card = document.createElement('div');
-          card.className = 'glass-card glass-card-hover';
+          card.className = 'card card-hover';
           card.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
               <span class="badge badge-primary">${sub.subject_code}</span>
-              <span class="badge" style="background: rgba(255,255,255,0.06);">Sec ${sub.section}</span>
+              <span class="badge" style="background: var(--surface-subtle);">Sec ${sub.section}</span>
             </div>
-            <h4 style="font-size: 1.15rem; margin-bottom: 0.5rem;">${sub.name}</h4>
-            <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1.25rem;">Course Code ID: #${sub.subject_id}</div>
+            <h4 style="font-size: 1.1rem; margin-bottom: 0.35rem;">${sub.name}</h4>
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">Course Code ID: #${sub.subject_id}</div>
             <button onclick="unenrollSubject(${sub.subject_id})" class="btn btn-danger btn-sm" style="width: 100%;">
               Unenroll Course
             </button>
@@ -552,12 +626,9 @@
       }
     }
 
-    // --- Join Modal ---
+    // Join Modal
     const joinModal = document.getElementById('join-modal');
-    document.getElementById('btn-open-join-modal').addEventListener('click', () => {
-      joinModal.classList.add('active');
-    });
-
+    document.getElementById('btn-open-join-modal').addEventListener('click', () => joinModal.classList.add('active'));
     document.getElementById('btn-close-join').addEventListener('click', () => joinModal.classList.remove('active'));
     document.getElementById('btn-cancel-join').addEventListener('click', () => joinModal.classList.remove('active'));
 
@@ -581,7 +652,7 @@
       } catch (err) {
         SnapClass.showAlert('join-alert-banner', err.message || 'Enrollment failed.', 'error');
       } finally {
-        SnapClass.setLoading(btn, false, 'Confirm Enrollment');
+        SnapClass.setLoading(btn, false, 'Enroll');
       }
     });
 
@@ -596,9 +667,7 @@
       }
     };
 
-    document.getElementById('btn-student-logout').addEventListener('click', () => {
-      location.reload();
-    });
+    document.getElementById('btn-student-logout').addEventListener('click', () => location.reload());
   </script>
 </body>
 </html>

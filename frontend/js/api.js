@@ -132,9 +132,24 @@ window.SnapClass = {
     });
   },
 
+  putForm: async (endpoint, formData) => {
+    return window.SnapClass.request(endpoint, {
+      method: 'PUT',
+      body: formData
+    });
+  },
+
   postJson: async (endpoint, data) => {
     return window.SnapClass.request(endpoint, {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+  },
+
+  putJson: async (endpoint, data) => {
+    return window.SnapClass.request(endpoint, {
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });

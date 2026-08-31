@@ -32,6 +32,29 @@ def teacher_login(username, password):
             return teacher
     return None
 
+def update_teacher_profile(teacher_id, name, username, password=None, department=None, contact=None, bio=None):
+    data = {"name": name, "username": username}
+    if password:
+        data["password"] = hash_pass(password)
+    
+    # Try updating with extended fields if schema supports them
+    extended_data = dict(data)
+    if department is not None:
+        extended_data["department"] = department
+    if contact is not None:
+        extended_data["contact"] = contact
+    if bio is not None:
+        extended_data["bio"] = bio
+        
+    try:
+        response = supabase.table("teachers").update(extended_data).eq("teacher_id", teacher_id).execute()
+        return response.data
+    except Exception:
+        # Fallback to core fields
+        response = supabase.table("teachers").update(data).eq("teacher_id", teacher_id).execute()
+        return response.data
+
+
 
 def get_all_students():
     response = supabase.table('students').select("*").execute()

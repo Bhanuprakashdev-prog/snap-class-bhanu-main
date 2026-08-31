@@ -26,6 +26,25 @@ def register_teacher(username: str = Form(...), password: str = Form(...), name:
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.put("/teacher/profile/{teacher_id}")
+def update_teacher_endpoint(
+    teacher_id: int, 
+    name: str = Form(...), 
+    username: str = Form(...), 
+    password: str = Form(None), 
+    department: str = Form(None), 
+    contact: str = Form(None), 
+    bio: str = Form(None)
+):
+    try:
+        from src.database.db import update_teacher_profile
+        updated = update_teacher_profile(teacher_id, name, username, password, department, contact, bio)
+        if not updated:
+            raise HTTPException(status_code=404, detail="Teacher not found or update failed")
+        return {"success": True, "teacher": updated[0], "message": "Profile updated successfully."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.post("/student/face-login")
 async def student_face_login(image: UploadFile = File(...)):
     content = await image.read()

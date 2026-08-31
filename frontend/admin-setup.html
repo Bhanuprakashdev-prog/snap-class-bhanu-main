@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SnapClass | Admin Emergency Setup Portal</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    #video-feed {
+      width: 100%;
+      max-width: 400px;
+      border-radius: var(--radius-md);
+      background: #000;
+      display: block;
+      margin: 1rem auto;
+      transform: scaleX(-1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="index.html" class="brand-title">SnapClass</a>
+      <span class="badge badge-critical">Emergency Admin Setup</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <div style="max-width: 480px; margin: 3rem auto;">
+      <div class="card" style="text-align: center;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🚨</div>
+        <h2 style="font-size: 1.6rem; margin-bottom: 0.25rem;">Administrator Emergency Enrollment</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem;">
+          Register or reset the Master Administrator face biometric. Requires the emergency recovery key.
+        </p>
+
+        <div id="setup-alert" class="alert-banner alert-error"></div>
+
+        <form id="setup-form" onsubmit="return false;">
+          <div class="input-group" style="text-align: left;">
+            <label class="input-label" for="setup-passcode">Master Recovery Key</label>
+            <input type="password" id="setup-passcode" class="input-control" placeholder="••••••••" required>
+          </div>
+
+          <div style="margin: 1.5rem 0;">
+            <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Face Biometric Capture</div>
+            <video id="video-feed" autoplay playsinline></video>
+            <canvas id="photo-canvas" style="display: none;"></canvas>
+            
+            <button id="btn-start-camera" type="button" class="btn btn-secondary btn-sm" style="margin-top: 0.5rem;">
+              📷 Start Camera
+            </button>
+          </div>
+
+          <button id="btn-register-face" class="btn btn-primary" style="width: 100%; margin-top: 1rem;" disabled>
+            <span>Capture & Enroll Master Face</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script>
+    const video = document.getElementById('video-feed');
+    const canvas = document.getElementById('photo-canvas');
+    const btnStartCamera = document.getElementById('btn-start-camera');
+    const btnRegister = document.getElementById('btn-register-face');
+    let stream = null;
+
+    btnStartCamera.addEventListener('click', async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+        video.srcObject = stream;
+        btnStartCamera.style.display = 'none';
+        btnRegister.disabled = false;
+        SnapClass.showToast("Camera activated. Please look directly at the lens.", "info");
+      } catch (err) {
+        SnapClass.showAlert('setup-alert', 'Camera access denied or unavailable.', 'error');
+      }
+    });
+
+    btnRegister.addEventListener('click', async () => {
+      const passInput = document.getElementById('setup-passcode');
+      if (!passInput.value.trim()) {
+        return SnapClass.showAlert('setup-alert', 'Master recovery key is required.', 'error');
+      }
+
+      if (!stream) {
+        return SnapClass.showAlert('setup-alert', 'Please start the camera first.', 'error');
+      }
+
+      SnapClass.setLoading(btnRegister, true);
+      SnapClass.hideAlert('setup-alert');
+
+      // Capture frame
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      // Mirror fix for drawing
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(async (blob) => {
+        try {
+          const formData = new FormData();
+          formData.append('passcode', passInput.value.trim());
+          formData.append('image', blob, 'admin_face.jpg');
+
+          const res = await SnapClass.postForm('/admin/register-admin-face', formData);
+          
+          if (res.success && res.token) {
+            sessionStorage.setItem("snapclass_admin_token", res.token);
+            
+            // Stop camera
+            stream.getTracks().forEach(track => track.stop());
+            
+            document.getElementById('setup-form').innerHTML = `
+              <div class="alert-banner alert-success active" style="margin-bottom: 1rem;">
+                ✅ Master Face Enrolled Successfully! Session bound to IP.
+              </div>
+              <button onclick="window.location.href='admin.html'" class="btn btn-primary" style="width: 100%;">
+                Proceed to Admin Dashboard
+              </button>
+            `;
+            SnapClass.showToast(res.message, "success");
+          }
+        } catch (err) {
+          SnapClass.showAlert('setup-alert', err.message || 'Face enrollment failed.', 'error');
+        } finally {
+          SnapClass.setLoading(btnRegister, false, 'Capture & Enroll Master Face');
+        }
+      }, 'image/jpeg', 0.95);
+    });
+  </script>
+</body>
+</html>
