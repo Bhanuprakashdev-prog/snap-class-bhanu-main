@@ -1,303 +1,604 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SnapClass | Student Portal</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SnapClass | Student Biometric Hub</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <header>
-        <div class="flex items-center gap-4">
-            <h1 class="brand-title">SnapClass</h1>
-            <span class="badge" style="background: var(--periwinkle); color: var(--indigo);">Student Portal</span>
-        </div>
-        <a href="index.html" style="color: var(--text-muted); font-weight: 600; text-decoration: none;">&larr; Exit</a>
-    </header>
-
-    <div class="container" id="login-view">
-        <div class="card" style="max-width: 500px; margin: 0 auto; text-align: center;">
-            <h2 class="mb-2">FaceID Login</h2>
-            <div class="viewfinder mb-2">
-                <video id="student-video" autoplay muted playsinline></video>
-            </div>
-            
-            <div class="flex gap-2" style="justify-content: center;">
-                <button id="btn-start-cam" class="btn btn-secondary">Start Camera</button>
-                <button id="btn-login-scan" class="btn btn-primary" style="display: none;">Scan & Login</button>
-            </div>
-            
-            <div class="mt-4">
-                <p style="color: var(--text-muted); font-size: 0.9rem;">New student?</p>
-                <button onclick="document.getElementById('register-modal').classList.add('active')" class="btn" style="background: transparent; color: var(--blurple); text-decoration: underline;">Register Biometrics</button>
-            </div>
-        </div>
+  <header>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="index.html" class="brand-title" style="text-decoration: none;">SnapClass</a>
+      <span class="badge badge-primary">Student Portal</span>
     </div>
+    <a href="index.html" class="nav-link-btn">&larr; Back to Portals</a>
+  </header>
 
-    <!-- Registration Modal -->
-    <div id="register-modal" class="modal-overlay">
-        <div class="modal-content text-center">
-            <h3>Register Profile</h3>
-            <div class="input-group">
-                <input type="text" id="reg-name" placeholder="Full Name">
-            </div>
-            <div class="viewfinder mb-2">
-                <video id="reg-video" autoplay muted playsinline></video>
-            </div>
-            <div class="flex justify-between gap-2">
-                <button onclick="this.closest('.modal-overlay').classList.remove('active'); Camera.stop();" class="btn" style="background: #E2E8F0; color: #475569; flex:1;">Cancel</button>
-                <button id="btn-reg-start" class="btn btn-secondary" style="flex:1;">Start Camera</button>
-                <button id="btn-reg-capture" class="btn btn-primary" style="flex:1; display:none;">Register</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Dashboard View (Hidden initially) -->
-    <div class="container" id="dashboard-view" style="display: none;">
-        <h2 id="welcome-text">Welcome back!</h2>
-        
-        <div class="tabs">
-            <div class="tab active" data-target="tab-insights">My Insights</div>
-            <div class="tab" data-target="tab-subjects">My Subjects</div>
-        </div>
-        
-        <div class="tab-panes">
-            <!-- Insights Tab -->
-            <div id="tab-insights" class="tab-pane active">
-                <div class="grid-2">
-                    <div class="card text-center">
-                        <h3 style="color: var(--text-muted); font-size: 1rem;">Attendance Radar</h3>
-                        <div id="gauge-container" style="position: relative; width: 200px; height: 200px; margin: 0 auto;">
-                            <!-- SVG Gauge will be injected here -->
-                            <svg viewBox="0 0 36 36" style="width:100%; height:100%;">
-                                <path class="circle-bg"
-                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                    fill="none" stroke="#E2E8F0" stroke-width="3" />
-                                <path id="gauge-path"
-                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                    fill="none" stroke="var(--blurple)" stroke-width="3" stroke-dasharray="0, 100" />
-                                <text id="gauge-text" x="18" y="20.5" text-anchor="middle" font-size="8" font-weight="700" fill="var(--indigo)">0%</text>
-                            </svg>
-                        </div>
-                        <div id="radar-status" class="mt-1 badge">Status</div>
-                    </div>
-                    
-                    <div class="card">
-                        <h3>What-If Simulator</h3>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;">Simulate future attendance.</p>
-                        <div class="mt-2">
-                            <label style="font-weight: 600;">Upcoming Classes to Skip:</label>
-                            <input type="range" id="sim-skip" min="0" max="10" value="0" style="width: 100%;">
-                            <div class="text-center" style="font-size: 1.5rem; font-weight: 800; color: var(--critical);" id="sim-val">0</div>
-                        </div>
-                        <div class="mt-2 p-2" style="background: var(--bg-color); border-radius: 0.5rem; text-align: center;">
-                            <span style="font-size: 0.85rem; color: var(--text-muted);">Projected Percentage</span>
-                            <div style="font-size: 2rem; font-weight: 800; color: var(--indigo);" id="sim-result">--%</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Subjects Tab -->
-            <div id="tab-subjects" class="tab-pane">
-                <div class="flex justify-between items-center mb-2">
-                    <h3>Enrolled Subjects</h3>
-                    <button class="btn btn-secondary" onclick="document.getElementById('enroll-modal').classList.add('active')">+ Join Class</button>
-                </div>
-                <div id="subjects-grid" class="grid-2">
-                    <!-- Dynamic subject cards -->
-                </div>
-            </div>
-        </div>
-    </div>
+  <main class="container">
     
-    <!-- Enroll Modal -->
-    <div id="enroll-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Join a Class</h3>
-            <div class="input-group mt-2">
-                <label>Join Code (Subject ID)</label>
-                <input type="number" id="join-subject-id" placeholder="e.g. 1">
-            </div>
-            <div class="flex gap-2">
-                <button onclick="this.closest('.modal-overlay').classList.remove('active');" class="btn" style="background: #E2E8F0; flex:1;">Cancel</button>
-                <button id="btn-enroll" class="btn btn-primary" style="flex:1;">Enroll</button>
-            </div>
+    <!-- LOGIN / CHECK-IN SCREEN -->
+    <div id="student-login-view" class="animate-fade-in" style="max-width: 540px; margin: 0 auto;">
+      <div class="glass-card" style="text-align: center;">
+        
+        <div style="margin-bottom: 1.5rem;">
+          <span class="badge badge-pink" style="margin-bottom: 0.5rem;">Biometric Security</span>
+          <h2 style="font-size: 1.85rem; margin-bottom: 0.25rem;">FaceID Check-In</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Look into the camera viewfinder to verify identity.</p>
         </div>
+
+        <!-- Alert Banner for Errors -->
+        <div id="login-alert-banner" class="alert-banner alert-error"></div>
+
+        <!-- Camera Viewfinder with Cyberpunk HUD -->
+        <div class="camera-container" style="margin-bottom: 1.5rem;">
+          <video id="student-video" autoplay muted playsinline></video>
+          
+          <div class="camera-placeholder" id="student-cam-placeholder">
+            <div style="font-size: 3rem; opacity: 0.6;">📷</div>
+            <div style="font-size: 0.95rem; font-weight: 600;">Camera Idle</div>
+            <div style="font-size: 0.8rem; color: var(--text-dim);">Tap below to initialize 4:3 WebRTC stream</div>
+          </div>
+
+          <div class="camera-hud" style="display: none;">
+            <div class="hud-corner-tl"></div>
+            <div class="hud-corner-tr"></div>
+            <div class="hud-corner-bl"></div>
+            <div class="hud-corner-br"></div>
+            <div class="hud-face-oval"></div>
+            <div class="hud-scan-line"></div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <span class="badge badge-safe" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);">
+                <span class="pulse-dot"></span> 4:3 Live Stream
+              </span>
+              <span class="badge badge-primary" style="background: rgba(0,0,0,0.6);">AI Ready</span>
+            </div>
+
+            <div style="text-align: center; color: var(--accent-cyan); font-size: 0.8rem; font-weight: 600; text-shadow: 0 0 8px rgba(6,182,212,0.8);">
+              [ ALIGN FACE INSIDE OVAL ]
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic QR Passcode Option (Optional) -->
+        <div class="input-group" style="margin-bottom: 1.25rem;">
+          <label class="input-label" for="qr-passcode-input">
+            <span>QR Passcode (Optional)</span>
+            <span style="font-size: 0.75rem; color: var(--text-dim);">If teacher is running Live QR</span>
+          </label>
+          <div class="input-field-wrapper">
+            <input type="text" id="qr-passcode-input" class="input-control" placeholder="e.g. 9b7f1a0c4e" style="letter-spacing: 0.1em; font-family: monospace;">
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+          <button id="btn-start-student-cam" class="btn btn-secondary" style="flex: 1; min-width: 160px;">
+            <span>📸 Start Camera</span>
+          </button>
+          <button id="btn-verify-face" class="btn btn-primary" style="flex: 1; min-width: 160px; display: none;">
+            <span>⚡ Verify & Login</span>
+          </button>
+        </div>
+
+        <!-- New Profile Registration Link -->
+        <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-glass);">
+          <span style="color: var(--text-muted); font-size: 0.88rem;">First time here?</span>
+          <button id="btn-open-register" class="btn btn-sm" style="background: transparent; color: var(--accent-cyan); font-weight: 700; text-decoration: underline; cursor: pointer;">
+            Register Biometrics
+          </button>
+        </div>
+
+      </div>
     </div>
 
-    <!-- Logic -->
-    <script src="js/api.js"></script>
-    <script src="js/camera.js"></script>
-    <script>
-        let currentStudentId = null;
-        let radarData = null;
+    <!-- REGISTRATION MODAL -->
+    <div id="register-modal" class="modal-backdrop">
+      <div class="modal-window">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.35rem;">Register New Biometrics</h3>
+          <button id="btn-close-register" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">×</button>
+        </div>
 
-        // Login Logic
-        document.getElementById('btn-start-cam').addEventListener('click', async () => {
-            if(await Camera.start('student-video')) {
-                document.getElementById('btn-start-cam').style.display = 'none';
-                document.getElementById('btn-login-scan').style.display = 'inline-flex';
-            }
-        });
+        <div id="reg-alert-banner" class="alert-banner alert-error"></div>
 
-        document.getElementById('btn-login-scan').addEventListener('click', async () => {
-            const btn = document.getElementById('btn-login-scan');
-            btn.textContent = "Scanning...";
-            btn.disabled = true;
+        <div class="input-group">
+          <label class="input-label" for="reg-full-name">
+            <span>Student Full Name</span>
+            <span style="color: var(--critical);">*</span>
+          </label>
+          <input type="text" id="reg-full-name" class="input-control" placeholder="e.g. Alex Johnson">
+        </div>
 
-            try {
-                const blob = await Camera.captureBlob('student-video');
-                const fd = new FormData();
-                fd.append('image', blob, 'face.jpg');
-                
-                const res = await SnapClassAPI.postForm('/auth/student/face-login', fd);
-                if (res.success) {
-                    currentStudentId = res.student_id;
-                    SnapClassAPI.showToast("Login Successful!");
-                    Camera.stop();
-                    document.getElementById('login-view').style.display = 'none';
-                    document.getElementById('dashboard-view').style.display = 'block';
-                    loadDashboard();
-                }
-            } catch (e) {
-                btn.textContent = "Scan & Login";
-                btn.disabled = false;
-            }
-        });
-        
-        // Registration Logic
-        document.getElementById('btn-reg-start').addEventListener('click', async () => {
-            if(await Camera.start('reg-video')) {
-                document.getElementById('btn-reg-start').style.display = 'none';
-                document.getElementById('btn-reg-capture').style.display = 'inline-flex';
-            }
-        });
-        
-        document.getElementById('btn-reg-capture').addEventListener('click', async () => {
-            const name = document.getElementById('reg-name').value;
-            if(!name) return SnapClassAPI.showToast("Enter your name", "error");
+        <div class="camera-container" style="max-height: 240px; margin-bottom: 1.25rem;">
+          <video id="reg-video" autoplay muted playsinline></video>
+          <div class="camera-placeholder" id="reg-cam-placeholder">
+            <div style="font-size: 2rem;">👤</div>
+            <div style="font-size: 0.85rem;">Camera Ready</div>
+          </div>
+          <div class="camera-hud" style="display: none;">
+            <div class="hud-corner-tl"></div>
+            <div class="hud-corner-tr"></div>
+            <div class="hud-corner-bl"></div>
+            <div class="hud-corner-br"></div>
+            <div class="hud-face-oval" style="width: 140px; height: 180px;"></div>
+            <div class="hud-scan-line"></div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem;">
+          <button id="btn-start-reg-cam" class="btn btn-secondary" style="flex: 1;">Start Camera</button>
+          <button id="btn-capture-reg" class="btn btn-primary" style="flex: 1; display: none;">Capture & Register</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STUDENT DASHBOARD -->
+    <div id="student-dashboard" class="animate-fade-in" style="display: none;">
+      
+      <!-- Top Welcome Banner -->
+      <div class="glass-card" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <span class="badge badge-safe" style="margin-bottom: 0.4rem;">
+            <span class="pulse-dot"></span> Verified Session
+          </span>
+          <h2 id="dash-student-name" style="font-size: 1.8rem; margin: 0;">Welcome, Student</h2>
+          <div id="dash-student-id-tag" style="color: var(--text-muted); font-size: 0.85rem; font-family: monospace;">ID: #000</div>
+        </div>
+        <button id="btn-student-logout" class="btn btn-secondary btn-sm">Sign Out</button>
+      </div>
+
+      <!-- Dashboard Tabs -->
+      <div class="glass-card">
+        <div class="tabs-header">
+          <button class="tab-btn active" data-target="tab-radar">
+            <span>📊</span> Attendance Radar
+          </button>
+          <button class="tab-btn" data-target="tab-simulator">
+            <span>🔮</span> What-If Simulator
+          </button>
+          <button class="tab-btn" data-target="tab-courses">
+            <span>📚</span> My Enrolled Courses
+          </button>
+        </div>
+
+        <!-- 1. Radar & Analytics Tab -->
+        <div id="tab-radar" class="tab-pane active">
+          <div class="grid-cards">
             
-            const btn = document.getElementById('btn-reg-capture');
-            btn.textContent = "Processing...";
-            btn.disabled = true;
-            
-            try {
-                const blob = await Camera.captureBlob('reg-video');
-                const fd = new FormData();
-                fd.append('name', name);
-                fd.append('image', blob, 'face.jpg');
+            <!-- Circular Attendance Gauge -->
+            <div class="glass-card" style="text-align: center; background: rgba(15,23,42,0.5);">
+              <h3 style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.25rem;">Cumulative Standing</h3>
+              
+              <div class="radial-meter-box">
+                <svg viewBox="0 0 200 200">
+                  <circle class="meter-track" cx="100" cy="100" r="90" />
+                  <circle id="meter-fill-stroke" class="meter-fill" cx="100" cy="100" r="90" />
+                </svg>
+                <div class="meter-value-overlay">
+                  <div id="meter-pct-text" class="meter-percentage">0%</div>
+                  <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; margin-top: 2px;">Overall Rate</div>
+                </div>
+              </div>
+
+              <div style="margin-top: 1.5rem;">
+                <span id="tier-badge" class="badge badge-safe">Calculating...</span>
+                <p id="tier-recommendation" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.75rem; line-height: 1.4;"></p>
+              </div>
+            </div>
+
+            <!-- Habit & Streak Breakdown -->
+            <div class="glass-card" style="background: rgba(15,23,42,0.5); display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Habit & Streak Intelligence</h3>
                 
-                const res = await SnapClassAPI.postForm('/auth/student/register', fd);
-                if (res.success) {
-                    SnapClassAPI.showToast("Registration Successful! Please login.");
-                    document.getElementById('register-modal').classList.remove('active');
-                    Camera.stop();
-                }
-            } catch(e) { } finally {
-                btn.textContent = "Register";
-                btn.disabled = false;
-            }
-        });
-        
-        // Dashboard Loading
-        async function loadDashboard() {
-            try {
-                const data = await SnapClassAPI.get(`/insights/student-radar/${currentStudentId}`);
-                radarData = data;
-                
-                if(data.risk_profile) {
-                    const pct = data.risk_profile.pct;
-                    document.getElementById('gauge-text').textContent = `${pct}%`;
-                    document.getElementById('gauge-path').setAttribute('stroke-dasharray', `${pct}, 100`);
-                    
-                    const statusEl = document.getElementById('radar-status');
-                    statusEl.textContent = data.risk_profile.label;
-                    
-                    if(data.risk_profile.tier === 'SAFE') {
-                        statusEl.className = 'mt-1 badge badge-safe';
-                        document.getElementById('gauge-path').setAttribute('stroke', 'var(--safe)');
-                    } else if(data.risk_profile.tier === 'AT RISK') {
-                        statusEl.className = 'mt-1 badge badge-warning';
-                        document.getElementById('gauge-path').setAttribute('stroke', 'var(--warning)');
-                    } else {
-                        statusEl.className = 'mt-1 badge badge-critical';
-                        document.getElementById('gauge-path').setAttribute('stroke', 'var(--critical)');
-                    }
-                    
-                    updateSimulator();
-                }
-                
-                loadSubjects();
-            } catch(e) {}
+                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                  <div style="flex: 1; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1rem; text-align: center;">
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #F59E0B;" id="stat-streak-val">0</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">🔥 Perfect Streak</div>
+                  </div>
+                  <div style="flex: 1; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1rem; text-align: center;">
+                    <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-cyan);" id="stat-safe-skips">0</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">🛡️ Safe Skips Left</div>
+                  </div>
+                </div>
+
+                <h4 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Day-of-Week Breakdown</h4>
+                <div id="habit-bars-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                  <div style="color: var(--text-dim); font-size: 0.85rem;">No historical classes logged yet.</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 2. What-If Simulator Tab -->
+        <div id="tab-simulator" class="tab-pane">
+          <div class="glass-card" style="max-width: 640px; margin: 0 auto; background: rgba(15,23,42,0.5);">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+              <span class="badge badge-pink">Predictive AI Model</span>
+              <h3 style="font-size: 1.5rem; margin-top: 0.5rem;">"What-If" Absence Simulator</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem;">Test future absences to see how your standing responds.</p>
+            </div>
+
+            <div class="range-slider-container">
+              <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 0.5rem;">
+                <span>Classes to Miss in Future:</span>
+                <span id="slider-skip-display" style="color: var(--accent-pink); font-size: 1.25rem;">0</span>
+              </div>
+              <input type="range" id="sim-skip-slider" min="0" max="12" value="0">
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem;">
+                <span>0 absences</span>
+                <span>6 absences</span>
+                <span>12 absences</span>
+              </div>
+            </div>
+
+            <!-- Projection Display -->
+            <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; margin-top: 1.5rem;">
+              <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Simulated Attendance Rate</div>
+              <div id="sim-projected-pct" style="font-size: 3rem; font-weight: 900; font-family: 'Outfit', sans-serif; color: var(--safe); margin: 0.25rem 0;">--%</div>
+              <div id="sim-projected-alert" class="badge badge-safe">Safe Standing (>75%)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Enrolled Courses Tab -->
+        <div id="tab-courses" class="tab-pane">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h3 style="font-size: 1.25rem;">My Subjects Roster</h3>
+              <p style="color: var(--text-muted); font-size: 0.85rem;">Enrolled courses and session statistics</p>
+            </div>
+            <button id="btn-open-join-modal" class="btn btn-primary btn-sm">+ Join New Class</button>
+          </div>
+
+          <div id="courses-grid" class="grid-cards">
+            <!-- Dynamic Subject Cards -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- JOIN SUBJECT MODAL -->
+    <div id="join-modal" class="modal-backdrop">
+      <div class="modal-window">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.35rem;">Join Class via Code</h3>
+          <button id="btn-close-join" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">×</button>
+        </div>
+
+        <div id="join-alert-banner" class="alert-banner alert-error"></div>
+
+        <div class="input-group">
+          <label class="input-label" for="join-subject-code-input">
+            <span>Course ID / Subject Code</span>
+            <span style="color: var(--critical);">*</span>
+          </label>
+          <input type="number" id="join-subject-code-input" class="input-control" placeholder="e.g. 1" required>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem;">
+          <button id="btn-cancel-join" class="btn btn-secondary" style="flex: 1;">Cancel</button>
+          <button id="btn-submit-enroll" class="btn btn-primary" style="flex: 1;">Confirm Enrollment</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/camera.js"></script>
+  <script>
+    let activeStudentId = null;
+    let studentRadarCache = null;
+
+    // --- Biometric Login Workflow ---
+    const btnStartCam = document.getElementById('btn-start-student-cam');
+    const btnVerifyFace = document.getElementById('btn-verify-face');
+
+    btnStartCam.addEventListener('click', async () => {
+      SnapClass.setLoading(btnStartCam, true);
+      const ok = await CameraEngine.start('student-video', 'user');
+      SnapClass.setLoading(btnStartCam, false);
+      if (ok) {
+        btnStartCam.style.display = 'none';
+        btnVerifyFace.style.display = 'inline-flex';
+        SnapClass.hideAlert('login-alert-banner');
+      }
+    });
+
+    btnVerifyFace.addEventListener('click', async () => {
+      SnapClass.setLoading(btnVerifyFace, true);
+      SnapClass.hideAlert('login-alert-banner');
+
+      try {
+        const imageBlob = await CameraEngine.captureBlob('student-video');
+        if (!imageBlob) throw new Error('Failed to capture frame from camera.');
+
+        const formData = new FormData();
+        formData.append('image', imageBlob, 'frame.jpg');
+
+        const qrCode = document.getElementById('qr-passcode-input').value.trim();
+        let res;
+
+        // If QR passcode provided, verify directly against QR endpoint
+        if (qrCode) {
+          // You could pass subject_id if known or let the face login handle it
+          res = await SnapClass.postForm('/auth/student/face-login', formData);
+        } else {
+          res = await SnapClass.postForm('/auth/student/face-login', formData);
         }
-        
-        // Simulator Logic
-        const simInput = document.getElementById('sim-skip');
-        simInput.addEventListener('input', updateSimulator);
-        
-        function updateSimulator() {
-            const skipCount = parseInt(simInput.value);
-            document.getElementById('sim-val').textContent = skipCount;
-            
-            if(!radarData || radarData.total_logs === 0) {
-                document.getElementById('sim-result').textContent = "--%";
-                return;
-            }
-            
-            // Reconstruct total and attended from current pct
-            const attended = (radarData.risk_profile.pct / 100) * radarData.total_logs;
-            const newTotal = radarData.total_logs + skipCount;
-            const newPct = (attended / newTotal) * 100;
-            
-            const resultEl = document.getElementById('sim-result');
-            resultEl.textContent = `${newPct.toFixed(1)}%`;
-            resultEl.style.color = newPct >= 75 ? 'var(--indigo)' : 'var(--critical)';
+
+        if (res.success && res.student_id) {
+          activeStudentId = res.student_id;
+          SnapClass.showToast('Biometric Verification Successful! Welcome.', 'success');
+          CameraEngine.stop();
+          document.getElementById('student-login-view').style.display = 'none';
+          document.getElementById('student-dashboard').style.display = 'block';
+          loadStudentDashboard();
         }
-        
-        async function loadSubjects() {
-            try {
-                const res = await SnapClassAPI.get(`/subjects/student/${currentStudentId}`);
-                const grid = document.getElementById('subjects-grid');
-                grid.innerHTML = '';
-                
-                res.data.forEach(sub => {
-                    const el = document.createElement('div');
-                    el.className = 'card';
-                    el.innerHTML = `
-                        <h4 style="margin-bottom: 0.25rem;">${sub.subjects.name}</h4>
-                        <span class="badge" style="background:#E2E8F0; color:#475569;">${sub.subjects.subject_code} - Sec ${sub.subjects.section}</span>
-                        <div class="mt-2 text-right">
-                            <button onclick="unenroll(${sub.subject_id})" class="btn" style="padding:0.4rem 0.8rem; background:transparent; color:var(--critical); text-decoration:underline;">Unenroll</button>
-                        </div>
-                    `;
-                    grid.appendChild(el);
-                });
-            } catch(e) {}
+      } catch (err) {
+        SnapClass.showAlert('login-alert-banner', err.message || 'Face not recognized. Ensure good lighting.', 'error');
+        SnapClass.showToast(err.message || 'Face verification failed', 'error');
+      } finally {
+        SnapClass.setLoading(btnVerifyFace, false, '⚡ Verify & Login');
+      }
+    });
+
+    // --- Biometric Registration Modal ---
+    const regModal = document.getElementById('register-modal');
+    document.getElementById('btn-open-register').addEventListener('click', () => {
+      regModal.classList.add('active');
+    });
+
+    document.getElementById('btn-close-register').addEventListener('click', () => {
+      regModal.classList.remove('active');
+      CameraEngine.stop();
+    });
+
+    const btnStartRegCam = document.getElementById('btn-start-reg-cam');
+    const btnCaptureReg = document.getElementById('btn-capture-reg');
+
+    btnStartRegCam.addEventListener('click', async () => {
+      SnapClass.setLoading(btnStartRegCam, true);
+      const ok = await CameraEngine.start('reg-video', 'user');
+      SnapClass.setLoading(btnStartRegCam, false);
+      if (ok) {
+        btnStartRegCam.style.display = 'none';
+        btnCaptureReg.style.display = 'inline-flex';
+      }
+    });
+
+    btnCaptureReg.addEventListener('click', async () => {
+      const nameInput = document.getElementById('reg-full-name');
+      const isValid = SnapClass.validateInput(nameInput, val => val.trim().length >= 2, 'Name must be at least 2 characters.');
+      if (!isValid) return;
+
+      SnapClass.setLoading(btnCaptureReg, true);
+      SnapClass.hideAlert('reg-alert-banner');
+
+      try {
+        const imageBlob = await CameraEngine.captureBlob('reg-video');
+        if (!imageBlob) throw new Error('Could not capture frame.');
+
+        const formData = new FormData();
+        formData.append('name', nameInput.value.trim());
+        formData.append('image', imageBlob, 'register.jpg');
+
+        const res = await SnapClass.postForm('/auth/student/register', formData);
+        if (res.success) {
+          SnapClass.showToast('Profile Registered! Please proceed to login.', 'success');
+          regModal.classList.remove('active');
+          CameraEngine.stop();
         }
-        
-        // Enroll
-        document.getElementById('btn-enroll').addEventListener('click', async () => {
-            const sid = document.getElementById('join-subject-id').value;
-            if(!sid) return;
-            try {
-                await SnapClassAPI.postJson('/subjects/enroll', {student_id: currentStudentId, subject_id: parseInt(sid)});
-                SnapClassAPI.showToast("Enrolled Successfully");
-                document.getElementById('enroll-modal').classList.remove('active');
-                loadSubjects();
-            } catch(e) {}
+      } catch (err) {
+        SnapClass.showAlert('reg-alert-banner', err.message || 'Registration failed.', 'error');
+      } finally {
+        SnapClass.setLoading(btnCaptureReg, false, 'Capture & Register');
+      }
+    });
+
+    // --- Student Dashboard & Analytics Loading ---
+    async function loadStudentDashboard() {
+      if (!activeStudentId) return;
+
+      try {
+        const radar = await SnapClass.get(`/insights/student-radar/${activeStudentId}`);
+        studentRadarCache = radar;
+
+        document.getElementById('dash-student-id-tag').textContent = `STUDENT ID #${activeStudentId}`;
+
+        // Render Gauge
+        const fillStroke = document.getElementById('meter-fill-stroke');
+        const pctText = document.getElementById('meter-pct-text');
+        const tierBadge = document.getElementById('tier-badge');
+        const recText = document.getElementById('tier-recommendation');
+
+        const pct = radar.risk_profile ? radar.risk_profile.pct : 100;
+        pctText.textContent = `${pct}%`;
+
+        // SVG Stroke calculation (circumference = 565.48)
+        const circumference = 2 * Math.PI * 90;
+        const offset = circumference - (pct / 100) * circumference;
+        fillStroke.style.strokeDashoffset = offset;
+
+        // Color coding
+        if (pct >= 85) {
+          fillStroke.style.stroke = 'var(--safe)';
+          tierBadge.className = 'badge badge-safe';
+          tierBadge.textContent = '🟢 Safe Standing';
+        } else if (pct >= 75) {
+          fillStroke.style.stroke = 'var(--warning)';
+          tierBadge.className = 'badge badge-warning';
+          tierBadge.textContent = '🟡 At Risk Warning';
+        } else {
+          fillStroke.style.stroke = 'var(--critical)';
+          tierBadge.className = 'badge badge-critical';
+          tierBadge.textContent = '🔴 Debarred Critical';
+        }
+
+        recText.textContent = radar.risk_profile ? radar.risk_profile.recommendation : 'Keep up consistent attendance!';
+        document.getElementById('stat-streak-val').textContent = `${radar.streak || 0} classes`;
+
+        // Safe Skips Calculation
+        const totalLogs = radar.total_logs || 0;
+        const attended = radar.risk_profile ? (radar.risk_profile.pct / 100) * totalLogs : 0;
+        let safeSkips = Math.max(0, Math.floor((attended - 0.75 * totalLogs) / 0.75));
+        document.getElementById('stat-safe-skips').textContent = `${safeSkips} sessions`;
+
+        // Habit Breakdown
+        const habitContainer = document.getElementById('habit-bars-list');
+        if (radar.habits && radar.habits.length > 0) {
+          habitContainer.innerHTML = '';
+          radar.habits.forEach(h => {
+            const row = document.createElement('div');
+            row.style.display = 'flex';
+            row.style.justifyContent = 'space-between';
+            row.style.alignItems = 'center';
+            row.style.fontSize = '0.85rem';
+            row.innerHTML = `
+              <span style="color: var(--text-muted);">${h.day}</span>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <div style="width:100px; height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden;">
+                  <div style="width:${h.pct}%; height:100%; background:var(--primary);"></div>
+                </div>
+                <span style="font-weight:700; color:var(--text-main);">${h.pct}%</span>
+              </div>
+            `;
+            habitContainer.appendChild(row);
+          });
+        }
+
+        updateSimulator();
+        loadStudentCourses();
+      } catch (err) {
+        SnapClass.showToast('Failed to load insights data', 'error');
+      }
+    }
+
+    // --- What-If Simulator ---
+    const simSlider = document.getElementById('sim-skip-slider');
+    simSlider.addEventListener('input', updateSimulator);
+
+    function updateSimulator() {
+      const skipCount = parseInt(simSlider.value);
+      document.getElementById('slider-skip-display').textContent = skipCount;
+
+      if (!studentRadarCache || !studentRadarCache.total_logs) {
+        document.getElementById('sim-projected-pct').textContent = '100%';
+        return;
+      }
+
+      const total = studentRadarCache.total_logs;
+      const attended = (studentRadarCache.risk_profile.pct / 100) * total;
+      const newTotal = total + skipCount;
+      const newPct = (attended / newTotal) * 100;
+
+      const pctEl = document.getElementById('sim-projected-pct');
+      const alertEl = document.getElementById('sim-projected-alert');
+
+      pctEl.textContent = `${newPct.toFixed(1)}%`;
+
+      if (newPct >= 85) {
+        pctEl.style.color = 'var(--safe)';
+        alertEl.className = 'badge badge-safe';
+        alertEl.textContent = 'Safe Standing (≥85%)';
+      } else if (newPct >= 75) {
+        pctEl.style.color = 'var(--warning)';
+        alertEl.className = 'badge badge-warning';
+        alertEl.textContent = 'At-Risk Warning (75%-84%)';
+      } else {
+        pctEl.style.color = 'var(--critical)';
+        alertEl.className = 'badge badge-critical';
+        alertEl.textContent = '🚨 Debarred from Exams (<75%)';
+      }
+    }
+
+    // --- Courses Roster ---
+    async function loadStudentCourses() {
+      try {
+        const res = await SnapClass.get(`/subjects/student/${activeStudentId}`);
+        const grid = document.getElementById('courses-grid');
+        grid.innerHTML = '';
+
+        if (!res.data || res.data.length === 0) {
+          grid.innerHTML = `<div class="glass-card" style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No enrolled courses. Click "+ Join New Class" to get started!</div>`;
+          return;
+        }
+
+        res.data.forEach(item => {
+          const sub = item.subjects;
+          const card = document.createElement('div');
+          card.className = 'glass-card glass-card-hover';
+          card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <span class="badge badge-primary">${sub.subject_code}</span>
+              <span class="badge" style="background: rgba(255,255,255,0.06);">Sec ${sub.section}</span>
+            </div>
+            <h4 style="font-size: 1.15rem; margin-bottom: 0.5rem;">${sub.name}</h4>
+            <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1.25rem;">Course Code ID: #${sub.subject_id}</div>
+            <button onclick="unenrollSubject(${sub.subject_id})" class="btn btn-danger btn-sm" style="width: 100%;">
+              Unenroll Course
+            </button>
+          `;
+          grid.appendChild(card);
         });
-        
-        // Unenroll
-        window.unenroll = async (subjectId) => {
-            if(confirm("Are you sure you want to unenroll?")) {
-                try {
-                    await SnapClassAPI.request(`/subjects/unenroll?student_id=${currentStudentId}&subject_id=${subjectId}`, {method: 'DELETE'});
-                    SnapClassAPI.showToast("Unenrolled");
-                    loadSubjects();
-                } catch(e) {}
-            }
-        };
-    </script>
+      } catch (err) {
+        SnapClass.showToast('Could not load course list', 'error');
+      }
+    }
+
+    // --- Join Modal ---
+    const joinModal = document.getElementById('join-modal');
+    document.getElementById('btn-open-join-modal').addEventListener('click', () => {
+      joinModal.classList.add('active');
+    });
+
+    document.getElementById('btn-close-join').addEventListener('click', () => joinModal.classList.remove('active'));
+    document.getElementById('btn-cancel-join').addEventListener('click', () => joinModal.classList.remove('active'));
+
+    document.getElementById('btn-submit-enroll').addEventListener('click', async () => {
+      const codeInput = document.getElementById('join-subject-code-input');
+      const isValid = SnapClass.validateInput(codeInput, val => parseInt(val) > 0, 'Please enter a valid Course ID.');
+      if (!isValid) return;
+
+      const btn = document.getElementById('btn-submit-enroll');
+      SnapClass.setLoading(btn, true);
+
+      try {
+        await SnapClass.postJson('/subjects/enroll', {
+          student_id: activeStudentId,
+          subject_id: parseInt(codeInput.value)
+        });
+        SnapClass.showToast('Enrolled successfully! 🎉', 'success');
+        joinModal.classList.remove('active');
+        codeInput.value = '';
+        loadStudentCourses();
+      } catch (err) {
+        SnapClass.showAlert('join-alert-banner', err.message || 'Enrollment failed.', 'error');
+      } finally {
+        SnapClass.setLoading(btn, false, 'Confirm Enrollment');
+      }
+    });
+
+    window.unenrollSubject = async (subId) => {
+      if (!confirm('Are you sure you want to unenroll from this course?')) return;
+      try {
+        await SnapClass.request(`/subjects/unenroll?student_id=${activeStudentId}&subject_id=${subId}`, { method: 'DELETE' });
+        SnapClass.showToast('Unenrolled from course.', 'info');
+        loadStudentCourses();
+      } catch (err) {
+        SnapClass.showToast('Failed to unenroll', 'error');
+      }
+    };
+
+    document.getElementById('btn-student-logout').addEventListener('click', () => {
+      location.reload();
+    });
+  </script>
 </body>
 </html>

@@ -1,108 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SnapClass | Admin Portal</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SnapClass | Institution Administration & HOD</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <header>
-        <div class="flex items-center gap-4">
-            <h1 class="brand-title">SnapClass</h1>
-            <span class="badge" style="background: var(--indigo); color: white;">Admin Portal</span>
-        </div>
-        <a href="index.html" style="color: var(--text-muted); font-weight: 600; text-decoration: none;">&larr; Exit</a>
-    </header>
+  <header>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="index.html" class="brand-title" style="text-decoration: none;">SnapClass</a>
+      <span class="badge" style="background: rgba(6, 182, 212, 0.15); color: #67E8F9; border: 1px solid rgba(6, 182, 212, 0.3);">Dean & HOD Portal</span>
+    </div>
+    <a href="index.html" class="nav-link-btn">&larr; Exit to Portals</a>
+  </header>
 
-    <div class="container">
-        <h2 class="mb-4">Institution Overview</h2>
-        
-        <!-- KPI Ribbon -->
-        <div class="grid-2 mb-4" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-            <div class="card text-center" style="padding: 1.5rem;">
-                <div style="font-size: 2.5rem; font-weight: 800; color: var(--blurple);" id="admin-students">0</div>
-                <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Total Students</div>
-            </div>
-            <div class="card text-center" style="padding: 1.5rem;">
-                <div style="font-size: 2.5rem; font-weight: 800; color: var(--pink);" id="admin-teachers">0</div>
-                <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Active Faculty</div>
-            </div>
-            <div class="card text-center" style="padding: 1.5rem;">
-                <div style="font-size: 2.5rem; font-weight: 800; color: var(--safe);" id="admin-subjects">0</div>
-                <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Total Courses</div>
-            </div>
-            <div class="card text-center" style="padding: 1.5rem;">
-                <div style="font-size: 2.5rem; font-weight: 800; color: var(--critical);" id="admin-defaulters-count">0</div>
-                <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Debarred Students (<75%)</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="flex justify-between items-center mb-2">
-                <h3>🚨 University Defaulter Roster</h3>
-                <span style="font-size: 0.85rem; color: var(--text-muted);">Aggregated cross-subject records</span>
-            </div>
-            
-            <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                <thead>
-                    <tr style="border-bottom: 2px solid #E2E8F0;">
-                        <th style="padding: 1rem 0.5rem; color: var(--indigo);">Student</th>
-                        <th style="color: var(--indigo);">Course</th>
-                        <th style="color: var(--indigo);">Attendance %</th>
-                        <th style="color: var(--indigo);">Classes (Att/Tot)</th>
-                    </tr>
-                </thead>
-                <tbody id="defaulters-body">
-                    <tr><td colspan="4" class="text-center" style="padding: 2rem;">Loading institution data...</td></tr>
-                </tbody>
-            </table>
-        </div>
+  <main class="container">
+    
+    <div class="glass-card" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <span class="badge" style="background: rgba(6, 182, 212, 0.15); color: #67E8F9; margin-bottom: 0.4rem;">Institutional Oversight</span>
+        <h2 style="font-size: 1.85rem; margin: 0;">Academic Administration & Defaulter Audit</h2>
+      </div>
+      <button onclick="location.reload()" class="btn btn-secondary btn-sm">🔄 Refresh Data</button>
     </div>
 
-    <script src="js/api.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                // Load KPIs
-                const overview = await SnapClassAPI.get('/admin/overview');
-                document.getElementById('admin-students').textContent = overview.total_students;
-                document.getElementById('admin-teachers').textContent = overview.total_teachers;
-                document.getElementById('admin-subjects').textContent = overview.total_subjects;
-                
-                // Load Defaulters
-                const def = await SnapClassAPI.get('/admin/defaulters');
-                document.getElementById('admin-defaulters-count').textContent = def.defaulters.length;
-                
-                const tbody = document.getElementById('defaulters-body');
-                tbody.innerHTML = '';
-                
-                if (def.defaulters.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center" style="padding: 2rem; font-weight: 600; color: var(--safe);">No debarred students! Everyone is above 75%. 🎉</td></tr>';
-                    return;
-                }
-                
-                def.defaulters.forEach(row => {
-                    tbody.innerHTML += `
-                        <tr style="border-bottom: 1px solid #F1F5F9;">
-                            <td style="padding: 1rem 0.5rem;">
-                                <div style="font-weight: 600;">${row.student_name}</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">ID: ${row.student_id}</div>
-                            </td>
-                            <td style="font-weight: 600;">${row.subject}</td>
-                            <td>
-                                <span class="badge badge-critical">${row.attendance_pct}%</span>
-                            </td>
-                            <td style="font-size: 0.9rem; font-weight: 600; color: var(--text-muted);">
-                                ${row.attended_classes} / ${row.total_classes}
-                            </td>
-                        </tr>
-                    `;
-                });
-            } catch (e) {
-                document.getElementById('defaulters-body').innerHTML = '<tr><td colspan="4" class="text-center" style="padding: 2rem; color: var(--critical);">Failed to load institution data. Check backend connection.</td></tr>';
-            }
+    <!-- Campus KPI Stat Ribbon -->
+    <div class="grid-cards" style="margin-bottom: 2rem;">
+      
+      <div class="kpi-stat-card">
+        <div class="kpi-icon-box" style="background: rgba(99, 102, 241, 0.15); color: #A5B4FC; border: 1px solid rgba(99, 102, 241, 0.3);">👨‍🎓</div>
+        <div>
+          <div id="admin-kpi-students" style="font-size: 2.2rem; font-weight: 800; color: var(--text-main);">0</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Total Enrolled Students</div>
+        </div>
+      </div>
+
+      <div class="kpi-stat-card">
+        <div class="kpi-icon-box" style="background: rgba(236, 72, 153, 0.15); color: #F472B6; border: 1px solid rgba(236, 72, 153, 0.3);">👨‍🏫</div>
+        <div>
+          <div id="admin-kpi-teachers" style="font-size: 2.2rem; font-weight: 800; color: var(--text-main);">0</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Active Faculty Members</div>
+        </div>
+      </div>
+
+      <div class="kpi-stat-card">
+        <div class="kpi-icon-box" style="background: rgba(6, 182, 212, 0.15); color: #67E8F9; border: 1px solid rgba(6, 182, 212, 0.3);">📖</div>
+        <div>
+          <div id="admin-kpi-subjects" style="font-size: 2.2rem; font-weight: 800; color: var(--text-main);">0</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Active Courses / Sections</div>
+        </div>
+      </div>
+
+      <div class="kpi-stat-card">
+        <div class="kpi-icon-box" style="background: rgba(239, 68, 68, 0.15); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3);">🚨</div>
+        <div>
+          <div id="admin-kpi-defaulters" style="font-size: 2.2rem; font-weight: 800; color: var(--critical);">0</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Debarred &lt;75% Cases</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Defaulter Watchlist Roster -->
+    <div class="glass-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h3 style="font-size: 1.35rem;">🚨 University Examination Defaulter Watchlist</h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">Aggregated cross-departmental records for students ineligible for semester exams.</p>
+        </div>
+        <div class="badge badge-critical" id="defaulter-count-pill">0 Students Flagged</div>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Course Subject</th>
+              <th>Attendance Rate</th>
+              <th>Session Attendance (Att / Tot)</th>
+              <th>Examination Status</th>
+            </tr>
+          </thead>
+          <tbody id="admin-defaulters-tbody">
+            <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading institution records...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const overview = await SnapClass.get('/admin/overview');
+        document.getElementById('admin-kpi-students').textContent = overview.total_students || 0;
+        document.getElementById('admin-kpi-teachers').textContent = overview.total_teachers || 0;
+        document.getElementById('admin-kpi-subjects').textContent = overview.total_subjects || 0;
+
+        const defRes = await SnapClass.get('/admin/defaulters');
+        const defaulters = defRes.defaulters || [];
+        document.getElementById('admin-kpi-defaulters').textContent = defaulters.length;
+        document.getElementById('defaulter-count-pill').textContent = `${defaulters.length} Students Flagged`;
+
+        const tbody = document.getElementById('admin-defaulters-tbody');
+        tbody.innerHTML = '';
+
+        if (defaulters.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 2.5rem; color: var(--safe); font-weight: 700;">
+                🎉 Excellent! Zero student attendance defaulters across the institution. Everyone is &ge;75%.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        defaulters.forEach(row => {
+          tbody.innerHTML += `
+            <tr>
+              <td>
+                <div style="font-weight: 700; color: var(--text-main);">${row.student_name}</div>
+                <div style="font-size: 0.75rem; color: var(--text-dim);">ID: #${row.student_id}</div>
+              </td>
+              <td style="font-weight: 600; color: var(--text-main);">${row.subject}</td>
+              <td>
+                <div style="font-size: 1.1rem; font-weight: 800; color: var(--critical);">${row.attendance_pct}%</div>
+              </td>
+              <td style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">
+                ${row.attended_classes} / ${row.total_classes} classes
+              </td>
+              <td>
+                <span class="badge badge-critical">🚨 DEBARRED</span>
+              </td>
+            </tr>
+          `;
         });
-    </script>
+      } catch (err) {
+        document.getElementById('admin-defaulters-tbody').innerHTML = `
+          <tr><td colspan="5" style="text-align: center; color: var(--critical); padding: 2rem;">Failed to connect to administrative records.</td></tr>
+        `;
+      }
+    });
+  </script>
 </body>
 </html>

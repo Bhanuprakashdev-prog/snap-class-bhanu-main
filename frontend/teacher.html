@@ -1,422 +1,665 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SnapClass | Teacher Portal</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <!-- QR Code Generator Lib for Live QR -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SnapClass | Teacher Management Studio</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
-    <header>
-        <div class="flex items-center gap-4">
-            <h1 class="brand-title">SnapClass</h1>
-            <span class="badge" style="background: var(--pink); color: white;">Teacher Portal</span>
-        </div>
-        <a href="index.html" style="color: var(--text-muted); font-weight: 600; text-decoration: none;">&larr; Exit</a>
-    </header>
+  <header>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="index.html" class="brand-title" style="text-decoration: none;">SnapClass</a>
+      <span class="badge badge-pink">Teacher Studio</span>
+    </div>
+    <a href="index.html" class="nav-link-btn">&larr; Exit to Portals</a>
+  </header>
 
-    <div class="container" id="login-view">
-        <div class="card" style="max-width: 400px; margin: 0 auto;">
-            <h2 class="text-center mb-2">Instructor Login</h2>
-            <div class="input-group">
-                <label>Username</label>
-                <input type="text" id="login-user">
-            </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="login-pass">
-            </div>
-            <button id="btn-login" class="btn btn-primary" style="width: 100%;">Login</button>
-            <div class="mt-2 text-center">
-                <button onclick="document.getElementById('register-modal').classList.add('active')" class="btn" style="background: transparent; color: var(--blurple); text-decoration: underline;">New Teacher? Register</button>
-            </div>
+  <main class="container">
+    
+    <!-- TEACHER AUTH SCREEN -->
+    <div id="teacher-auth-view" class="animate-fade-in" style="max-width: 440px; margin: 2rem auto;">
+      <div class="glass-card">
+        
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+          <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">👨‍🏫</div>
+          <h2 style="font-size: 1.75rem; margin-bottom: 0.25rem;">Instructor Portal</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Sign in to manage courses and biometric attendance.</p>
         </div>
+
+        <div id="teacher-auth-alert" class="alert-banner alert-error"></div>
+
+        <form id="teacher-login-form" onsubmit="return false;">
+          <div class="input-group">
+            <label class="input-label" for="t-login-username">Username</label>
+            <input type="text" id="t-login-username" class="input-control" placeholder="e.g. prof_smith" required>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="t-login-password">Password</label>
+            <input type="password" id="t-login-password" class="input-control" placeholder="••••••••" required>
+          </div>
+
+          <button id="btn-t-login" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+            <span>Sign In to Dashboard</span>
+          </button>
+        </form>
+
+        <div style="margin-top: 1.5rem; text-align: center; border-top: 1px solid var(--border-glass); padding-top: 1rem;">
+          <span style="color: var(--text-muted); font-size: 0.85rem;">New faculty member?</span>
+          <button id="btn-toggle-reg-modal" class="btn btn-sm" style="background: none; color: var(--accent-cyan); text-decoration: underline; font-weight: 700;">
+            Register Account
+          </button>
+        </div>
+
+      </div>
     </div>
 
-    <!-- Registration Modal -->
-    <div id="register-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Register Instructor</h3>
-            <div class="input-group mt-2">
-                <label>Full Name</label>
-                <input type="text" id="reg-name">
-            </div>
-            <div class="input-group">
-                <label>Username</label>
-                <input type="text" id="reg-user">
-            </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="reg-pass">
-            </div>
-            <div class="flex gap-2 mt-4">
-                <button onclick="this.closest('.modal-overlay').classList.remove('active');" class="btn" style="background: #E2E8F0; flex:1;">Cancel</button>
-                <button id="btn-reg" class="btn btn-primary" style="flex:1;">Register</button>
-            </div>
+    <!-- TEACHER REGISTRATION MODAL -->
+    <div id="teacher-reg-modal" class="modal-backdrop">
+      <div class="modal-window">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.35rem;">Register Faculty Account</h3>
+          <button id="btn-close-t-reg" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">×</button>
         </div>
+
+        <div id="t-reg-alert" class="alert-banner alert-error"></div>
+
+        <div class="input-group">
+          <label class="input-label" for="t-reg-name">Full Name & Title</label>
+          <input type="text" id="t-reg-name" class="input-control" placeholder="e.g. Dr. Alan Turing">
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="t-reg-user">Username</label>
+          <input type="text" id="t-reg-user" class="input-control" placeholder="e.g. aturing">
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="t-reg-pass">Password</label>
+          <input type="password" id="t-reg-pass" class="input-control" placeholder="••••••••">
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+          <button id="btn-cancel-t-reg" class="btn btn-secondary" style="flex: 1;">Cancel</button>
+          <button id="btn-submit-t-reg" class="btn btn-primary" style="flex: 1;">Create Account</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Dashboard -->
-    <div class="container" id="dashboard-view" style="display: none;">
-        <div class="flex justify-between items-center mb-2">
-            <h2>Teacher Dashboard</h2>
-            <div style="font-weight: 600; color: var(--indigo);" id="teacher-name-display"></div>
+    <!-- TEACHER DASHBOARD (AUTHENTICATED) -->
+    <div id="teacher-dashboard" class="animate-fade-in" style="display: none;">
+      
+      <!-- Top Welcome & KPI Summary Ribbon -->
+      <div class="glass-card" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <span class="badge badge-pink" style="margin-bottom: 0.4rem;">Instructor Workspace</span>
+          <h2 id="teacher-greeting" style="font-size: 1.8rem; margin: 0;">Faculty Dashboard</h2>
         </div>
-        
-        <!-- Metrics Ribbon -->
-        <div class="grid-2 mb-4" style="grid-template-columns: repeat(4, 1fr);">
-            <div class="card text-center" style="padding: 1rem;">
-                <div style="font-size: 2rem; font-weight: 800; color: var(--blurple);" id="kpi-courses">0</div>
-                <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Active Courses</div>
-            </div>
-            <div class="card text-center" style="padding: 1rem;">
-                <div style="font-size: 2rem; font-weight: 800; color: var(--indigo);" id="kpi-students">0</div>
-                <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Total Students</div>
-            </div>
+        <button id="btn-teacher-logout" class="btn btn-secondary btn-sm">Sign Out</button>
+      </div>
+
+      <!-- KPI Metrics Ribbon -->
+      <div class="grid-cards" style="margin-bottom: 1.5rem;">
+        <div class="kpi-stat-card">
+          <div class="kpi-icon-box" style="background: rgba(99, 102, 241, 0.15); color: #A5B4FC; border: 1px solid rgba(99, 102, 241, 0.3);">📚</div>
+          <div>
+            <div id="kpi-active-courses" style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">0</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Active Courses</div>
+          </div>
         </div>
-        
-        <div class="tabs">
-            <div class="tab active" data-target="tab-attendance">📸 Studio</div>
-            <div class="tab" data-target="tab-subjects">📚 Subjects</div>
-            <div class="tab" data-target="tab-radar">🤖 Risk Radar</div>
-            <div class="tab" data-target="tab-records">📋 Records</div>
+
+        <div class="kpi-stat-card">
+          <div class="kpi-icon-box" style="background: rgba(236, 72, 153, 0.15); color: #F472B6; border: 1px solid rgba(236, 72, 153, 0.3);">👥</div>
+          <div>
+            <div id="kpi-total-students" style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">0</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Enrolled Students</div>
+          </div>
         </div>
-        
-        <div class="tab-panes">
-            <!-- Studio Tab -->
-            <div id="tab-attendance" class="tab-pane active">
-                <div class="input-group" style="max-width: 300px;">
-                    <label>Select Subject</label>
-                    <select id="studio-subject-select"></select>
-                </div>
+
+        <div class="kpi-stat-card">
+          <div class="kpi-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3);">⚡</div>
+          <div>
+            <div id="kpi-sessions-conducted" style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">0</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Total Class Sessions</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Dashboard Tabs -->
+      <div class="glass-card">
+        <div class="tabs-header">
+          <button class="tab-btn active" data-target="tab-studio">
+            <span>📸</span> Attendance Studio
+          </button>
+          <button class="tab-btn" data-target="tab-courses-mgr">
+            <span>📖</span> Course Management
+          </button>
+          <button class="tab-btn" data-target="tab-risk-radar">
+            <span>🤖</span> ML Risk Radar
+          </button>
+          <button class="tab-btn" data-target="tab-reports">
+            <span>📥</span> Records & Exports
+          </button>
+        </div>
+
+        <!-- 1. Attendance Studio Tab -->
+        <div id="tab-studio" class="tab-pane active">
+          
+          <div style="max-width: 360px; margin-bottom: 1.5rem;">
+            <label class="input-label" for="studio-course-select">Select Active Course Session</label>
+            <select id="studio-course-select" class="input-control"></select>
+          </div>
+
+          <div class="grid-cards">
+            
+            <!-- Live QR Projector Frame -->
+            <div class="glass-card" style="background: rgba(15,23,42,0.5); text-align: center;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="font-size: 1.15rem;">Live QR Projector</h3>
+                <span class="badge badge-primary">Anti-Proxy 5s</span>
+              </div>
+              <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.25rem;">
+                Project rotating time-bucketed QR code on classroom screen for student check-ins.
+              </p>
+
+              <button id="btn-toggle-projector" class="btn btn-secondary" style="width: 100%; margin-bottom: 1rem;">
+                <span>📽️ Launch Projector</span>
+              </button>
+
+              <div id="qr-live-container" style="display: none; padding: 1.5rem; background: #FFFFFF; border-radius: var(--radius-md); margin-top: 1rem;">
+                <div id="qrcode-box" style="display: inline-block;"></div>
                 
-                <div class="grid-2 mt-4">
-                    <!-- Face Scan Mode -->
-                    <div class="card">
-                        <h3>Classroom Face Scan</h3>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;">Upload a wide-angle class photo to scan all enrolled students instantly.</p>
-                        <input type="file" id="photo-upload" accept="image/*" class="mt-2 mb-2" style="display: block; width: 100%;">
-                        <button id="btn-photo-scan" class="btn btn-primary" style="width: 100%;">Process Image</button>
-                        <div id="photo-results" class="mt-2 text-center" style="font-weight: 600; color: var(--safe);"></div>
-                    </div>
-                    
-                    <!-- QR Live Projection Mode -->
-                    <div class="card">
-                        <h3>Live QR Projection</h3>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;">Project this rotating code on screen. Valid for 5 seconds.</p>
-                        <button id="btn-start-qr" class="btn btn-secondary mt-2 mb-2" style="width: 100%;">Launch Projector</button>
-                        
-                        <div id="qr-display" class="text-center mt-2" style="display: none; padding: 1rem; background: white; border-radius: 1rem;">
-                            <div id="qrcode" style="display: inline-block;"></div>
-                            <div class="mt-1" style="font-family: monospace; font-size: 1.5rem; font-weight: 800; color: var(--indigo);" id="qr-text"></div>
-                            <div class="mt-1" style="font-size: 0.8rem; color: var(--text-muted);">Rotates in <span id="qr-countdown" style="font-weight: bold; color: var(--critical);">5</span>s</div>
-                        </div>
-                    </div>
+                <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <span style="font-size: 0.75rem; color: #64748B; font-weight: 700; text-transform: uppercase;">Passcode:</span>
+                    <div id="qr-passcode-badge" style="font-family: monospace; font-size: 1.3rem; font-weight: 800; color: var(--primary);">--------</div>
+                  </div>
+                  <div class="qr-countdown-ring">
+                    <span id="qr-countdown-seconds">5</span>s
+                  </div>
                 </div>
+              </div>
             </div>
-            
-            <!-- Subjects Tab -->
-            <div id="tab-subjects" class="tab-pane">
-                <div class="flex justify-between items-center mb-2">
-                    <h3>My Courses</h3>
-                    <button class="btn btn-secondary" onclick="document.getElementById('create-subject-modal').classList.add('active')">+ Create Course</button>
-                </div>
-                <div id="subjects-grid" class="grid-2"></div>
+
+            <!-- Classroom Photo Multi-Face Recognition -->
+            <div class="glass-card" style="background: rgba(15,23,42,0.5);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="font-size: 1.15rem;">Classroom Photo Face Scan</h3>
+                <span class="badge badge-pink">dlib ResNet</span>
+              </div>
+              <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.25rem;">
+                Upload a group photo of the classroom to mark all enrolled students in one shot.
+              </p>
+
+              <div id="drop-photo-zone" style="border: 2px dashed var(--border-glass); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 1rem;">
+                <div style="font-size: 2.2rem; margin-bottom: 0.25rem;">📷</div>
+                <div style="font-size: 0.9rem; font-weight: 600;">Choose classroom photo or drag & drop</div>
+                <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem;">Supports JPG, PNG, WEBP</div>
+                <input type="file" id="classroom-photo-input" accept="image/*" style="display: none;">
+              </div>
+
+              <div id="photo-preview-box" style="display: none; align-items: center; gap: 1rem; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: var(--radius-sm); margin-bottom: 1rem;">
+                <img id="photo-preview-img" style="width: 54px; height: 54px; object-fit: cover; border-radius: 6px;" />
+                <div style="flex: 1; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" id="photo-preview-name">photo.jpg</div>
+              </div>
+
+              <button id="btn-process-classroom-photo" class="btn btn-primary" style="width: 100%;">
+                <span>Scan & Log Attendance</span>
+              </button>
+
+              <div id="photo-scan-results" style="margin-top: 1rem; display: none; padding: 0.85rem; border-radius: var(--radius-sm); font-size: 0.85rem;"></div>
             </div>
-            
-            <!-- Risk Radar Tab -->
-            <div id="tab-radar" class="tab-pane">
-                <div class="input-group" style="max-width: 300px;">
-                    <label>Select Subject to Analyze</label>
-                    <select id="radar-subject-select"></select>
-                </div>
-                <div class="card mt-2">
-                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                        <thead>
-                            <tr style="border-bottom: 2px solid #E2E8F0;">
-                                <th style="padding: 1rem 0.5rem;">Student</th>
-                                <th>Attendance %</th>
-                                <th>Risk Label</th>
-                                <th>Recommendation</th>
-                            </tr>
-                        </thead>
-                        <tbody id="radar-table-body">
-                            <tr><td colspan="4" class="text-center" style="padding: 2rem; color: var(--text-muted);">Select a subject to load ML analytics.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- Records Tab -->
-            <div id="tab-records" class="tab-pane">
-                <div class="input-group" style="max-width: 300px;">
-                    <label>Select Subject</label>
-                    <select id="export-subject-select"></select>
-                </div>
-                <button id="btn-export-csv" class="btn btn-primary mt-2">📥 Download CSV Report</button>
-            </div>
+
+          </div>
         </div>
+
+        <!-- 2. Course Management Tab -->
+        <div id="tab-courses-mgr" class="tab-pane">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h3 style="font-size: 1.25rem;">Active Courses</h3>
+              <p style="color: var(--text-muted); font-size: 0.85rem;">Manage courses, sections, and enrollments</p>
+            </div>
+            <button id="btn-open-create-course" class="btn btn-primary btn-sm">+ Create New Course</button>
+          </div>
+
+          <div id="teacher-courses-grid" class="grid-cards"></div>
+        </div>
+
+        <!-- 3. AI Risk Radar Tab -->
+        <div id="tab-risk-radar" class="tab-pane">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+            <div style="max-width: 320px; width: 100%;">
+              <label class="input-label" for="radar-course-select">Filter by Course</label>
+              <select id="radar-course-select" class="input-control"></select>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">
+              Scikit-Learn Logistic Regression & Moving Average Slope
+            </div>
+          </div>
+
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>Attendance %</th>
+                  <th>Risk Tier</th>
+                  <th>AI Predictive Guidance</th>
+                </tr>
+              </thead>
+              <tbody id="risk-radar-tbody">
+                <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">Select a course above to run ML risk models.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 4. Records & Exports Tab -->
+        <div id="tab-reports" class="tab-pane">
+          <div class="glass-card" style="max-width: 500px; background: rgba(15,23,42,0.5);">
+            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">University Compliance Export</h3>
+            <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem;">
+              Download university exam-compliant CSV reports with debarred (&lt;75%) students highlighted.
+            </p>
+
+            <div class="input-group">
+              <label class="input-label" for="export-course-select">Select Course</label>
+              <select id="export-course-select" class="input-control"></select>
+            </div>
+
+            <button id="btn-trigger-export" class="btn btn-cyan" style="width: 100%;">
+              <span>📥 Download CSV Report</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
     </div>
 
-    <!-- Create Subject Modal -->
-    <div id="create-subject-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Create New Course</h3>
-            <div class="input-group mt-2">
-                <label>Subject Code</label>
-                <input type="text" id="sub-code" placeholder="e.g. CS101">
-            </div>
-            <div class="input-group">
-                <label>Name</label>
-                <input type="text" id="sub-name" placeholder="Introduction to Computer Science">
-            </div>
-            <div class="input-group">
-                <label>Section</label>
-                <input type="text" id="sub-section" placeholder="A">
-            </div>
-            <div class="flex gap-2 mt-4">
-                <button onclick="this.closest('.modal-overlay').classList.remove('active');" class="btn" style="background: #E2E8F0; flex:1;">Cancel</button>
-                <button id="btn-create-sub" class="btn btn-primary" style="flex:1;">Create</button>
-            </div>
+    <!-- CREATE COURSE MODAL -->
+    <div id="create-course-modal" class="modal-backdrop">
+      <div class="modal-window">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.35rem;">Create New Course</h3>
+          <button id="btn-close-create-course" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">×</button>
         </div>
+
+        <div id="create-course-alert" class="alert-banner alert-error"></div>
+
+        <div class="input-group">
+          <label class="input-label" for="c-code">Course Code</label>
+          <input type="text" id="c-code" class="input-control" placeholder="e.g. CS-302" required>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="c-name">Subject / Course Name</label>
+          <input type="text" id="c-name" class="input-control" placeholder="e.g. Computer Architecture" required>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="c-sec">Section</label>
+          <input type="text" id="c-sec" class="input-control" placeholder="e.g. A" required>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+          <button id="btn-cancel-create-course" class="btn btn-secondary" style="flex: 1;">Cancel</button>
+          <button id="btn-submit-create-course" class="btn btn-primary" style="flex: 1;">Create Subject</button>
+        </div>
+      </div>
     </div>
 
-    <script src="js/api.js"></script>
-    <script>
-        let currentTeacher = null;
-        let subjects = [];
-        let qrInterval = null;
-        let countdownInterval = null;
+  </main>
 
-        // Auth
-        document.getElementById('btn-login').addEventListener('click', async () => {
-            const user = document.getElementById('login-user').value;
-            const pass = document.getElementById('login-pass').value;
-            
-            const fd = new FormData();
-            fd.append('username', user);
-            fd.append('password', pass);
-            
-            try {
-                const res = await SnapClassAPI.postForm('/auth/teacher/login', fd);
-                currentTeacher = res.teacher;
-                document.getElementById('teacher-name-display').textContent = currentTeacher.name;
-                document.getElementById('login-view').style.display = 'none';
-                document.getElementById('dashboard-view').style.display = 'block';
-                loadSubjects();
-            } catch(e) {}
+  <script src="js/api.js"></script>
+  <script>
+    let activeTeacher = null;
+    let teacherCourses = [];
+    let qrTimerInterval = null;
+    let qrSecondCounterInterval = null;
+    let qrCodeRenderer = null;
+
+    // --- Teacher Auth ---
+    document.getElementById('btn-t-login').addEventListener('click', async () => {
+      const userEl = document.getElementById('t-login-username');
+      const passEl = document.getElementById('t-login-password');
+
+      const isUserValid = SnapClass.validateInput(userEl, val => val.trim().length > 0, 'Username is required.');
+      const isPassValid = SnapClass.validateInput(passEl, val => val.trim().length > 0, 'Password is required.');
+      if (!isUserValid || !isPassValid) return;
+
+      const btn = document.getElementById('btn-t-login');
+      SnapClass.setLoading(btn, true);
+      SnapClass.hideAlert('teacher-auth-alert');
+
+      try {
+        const formData = new FormData();
+        formData.append('username', userEl.value.trim());
+        formData.append('password', passEl.value);
+
+        const res = await SnapClass.postForm('/auth/teacher/login', formData);
+        if (res.success && res.teacher) {
+          activeTeacher = res.teacher;
+          SnapClass.showToast(`Welcome, ${activeTeacher.name}!`, 'success');
+          document.getElementById('teacher-auth-view').style.display = 'none';
+          document.getElementById('teacher-dashboard').style.display = 'block';
+          document.getElementById('teacher-greeting').textContent = `Welcome, ${activeTeacher.name}`;
+          loadTeacherCourses();
+        }
+      } catch (err) {
+        SnapClass.showAlert('teacher-auth-alert', err.message || 'Invalid credentials.', 'error');
+      } finally {
+        SnapClass.setLoading(btn, false, 'Sign In to Dashboard');
+      }
+    });
+
+    // --- Teacher Registration Modal ---
+    const tRegModal = document.getElementById('teacher-reg-modal');
+    document.getElementById('btn-toggle-reg-modal').addEventListener('click', () => tRegModal.classList.add('active'));
+    document.getElementById('btn-close-t-reg').addEventListener('click', () => tRegModal.classList.remove('active'));
+    document.getElementById('btn-cancel-t-reg').addEventListener('click', () => tRegModal.classList.remove('active'));
+
+    document.getElementById('btn-submit-t-reg').addEventListener('click', async () => {
+      const nameInput = document.getElementById('t-reg-name');
+      const userInput = document.getElementById('t-reg-user');
+      const passInput = document.getElementById('t-reg-pass');
+
+      const v1 = SnapClass.validateInput(nameInput, val => val.trim().length >= 2, 'Name must be at least 2 chars.');
+      const v2 = SnapClass.validateInput(userInput, val => val.trim().length >= 3, 'Username must be at least 3 chars.');
+      const v3 = SnapClass.validateInput(passInput, val => val.length >= 4, 'Password must be at least 4 chars.');
+      if (!v1 || !v2 || !v3) return;
+
+      const btn = document.getElementById('btn-submit-t-reg');
+      SnapClass.setLoading(btn, true);
+
+      try {
+        const formData = new FormData();
+        formData.append('name', nameInput.value.trim());
+        formData.append('username', userInput.value.trim());
+        formData.append('password', passInput.value);
+
+        const res = await SnapClass.postForm('/auth/teacher/register', formData);
+        if (res.success) {
+          SnapClass.showToast('Registration successful! Please sign in.', 'success');
+          tRegModal.classList.remove('active');
+        }
+      } catch (err) {
+        SnapClass.showAlert('t-reg-alert', err.message || 'Registration failed.', 'error');
+      } finally {
+        SnapClass.setLoading(btn, false, 'Create Account');
+      }
+    });
+
+    // --- Load Teacher Courses & Metrics ---
+    async function loadTeacherCourses() {
+      if (!activeTeacher) return;
+      try {
+        const res = await SnapClass.get(`/subjects/teacher/${activeTeacher.teacher_id}`);
+        teacherCourses = res.data || [];
+
+        document.getElementById('kpi-active-courses').textContent = teacherCourses.length;
+        let totalStudents = 0;
+        let totalClasses = 0;
+
+        const grid = document.getElementById('teacher-courses-grid');
+        grid.innerHTML = '';
+
+        const selectors = [
+          document.getElementById('studio-course-select'),
+          document.getElementById('radar-course-select'),
+          document.getElementById('export-course-select')
+        ];
+
+        selectors.forEach(sel => sel.innerHTML = '<option value="">-- Choose Course --</option>');
+
+        teacherCourses.forEach(sub => {
+          totalStudents += sub.total_students || 0;
+          totalClasses += sub.total_classes || 0;
+
+          const card = document.createElement('div');
+          card.className = 'glass-card glass-card-hover';
+          card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <span class="badge badge-pink">${sub.subject_code}</span>
+              <span class="badge" style="background: rgba(255,255,255,0.06);">Sec ${sub.section}</span>
+            </div>
+            <h4 style="font-size: 1.25rem; margin-bottom: 0.75rem;">${sub.name}</h4>
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.25rem;">
+              <div>
+                <div style="font-size: 1.3rem; font-weight: 800; color: var(--text-main);">${sub.total_students || 0}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Students</div>
+              </div>
+              <div>
+                <div style="font-size: 1.3rem; font-weight: 800; color: var(--accent-cyan);">${sub.total_classes || 0}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Sessions</div>
+              </div>
+            </div>
+            <div style="background: rgba(0,0,0,0.25); padding: 0.6rem; border-radius: var(--radius-sm); font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: var(--text-muted);">Course ID: <strong>#${sub.subject_id}</strong></span>
+              <button onclick="navigator.clipboard.writeText('${sub.subject_id}'); SnapClass.showToast('Copied Course ID!', 'info')" style="background: none; border: none; color: var(--primary); cursor: pointer; font-weight: 700;">Copy ID</button>
+            </div>
+          `;
+          grid.appendChild(card);
+
+          const opt = `<option value="${sub.subject_id}">${sub.subject_code} - ${sub.name} (Sec ${sub.section})</option>`;
+          selectors.forEach(sel => sel.innerHTML += opt);
         });
 
-        document.getElementById('btn-reg').addEventListener('click', async () => {
-            const name = document.getElementById('reg-name').value;
-            const user = document.getElementById('reg-user').value;
-            const pass = document.getElementById('reg-pass').value;
-            
-            const fd = new FormData();
-            fd.append('name', name);
-            fd.append('username', user);
-            fd.append('password', pass);
-            
-            try {
-                await SnapClassAPI.postForm('/auth/teacher/register', fd);
-                SnapClassAPI.showToast("Registered successfully. Please login.");
-                document.getElementById('register-modal').classList.remove('active');
-            } catch(e) {}
-        });
+        document.getElementById('kpi-total-students').textContent = totalStudents;
+        document.getElementById('kpi-sessions-conducted').textContent = totalClasses;
+      } catch (err) {
+        SnapClass.showToast('Failed to load courses', 'error');
+      }
+    }
 
-        async function loadSubjects() {
-            if(!currentTeacher) return;
-            try {
-                const res = await SnapClassAPI.get(`/subjects/teacher/${currentTeacher.teacher_id}`);
-                subjects = res.data;
-                
-                document.getElementById('kpi-courses').textContent = subjects.length;
-                let totalStudents = 0;
-                
-                const grid = document.getElementById('subjects-grid');
-                grid.innerHTML = '';
-                
-                // Selectors
-                const selectors = [
-                    document.getElementById('studio-subject-select'),
-                    document.getElementById('radar-subject-select'),
-                    document.getElementById('export-subject-select')
-                ];
-                
-                selectors.forEach(sel => sel.innerHTML = '<option value="">-- Choose Subject --</option>');
-                
-                subjects.forEach(sub => {
-                    totalStudents += sub.total_students || 0;
-                    
-                    grid.innerHTML += `
-                        <div class="card">
-                            <h4 style="margin-bottom: 0.25rem;">${sub.name}</h4>
-                            <span class="badge" style="background:#E2E8F0; color:#475569;">${sub.subject_code} - Sec ${sub.section}</span>
-                            <div class="mt-2 text-center" style="font-size: 1.5rem; font-weight:800; color:var(--indigo);">
-                                ${sub.total_students || 0} <span style="font-size:0.8rem; font-weight:600; color:var(--text-muted);">Enrolled</span>
-                            </div>
-                            <div class="mt-2 p-2" style="background:var(--bg-color); border-radius:0.5rem; text-align:center;">
-                                <span style="font-size: 0.8rem; font-weight:bold; color:var(--blurple);">Course ID: ${sub.subject_id}</span>
-                                <div style="font-size:0.75rem; color:var(--text-muted);">Share this code with students to join</div>
-                            </div>
-                        </div>
-                    `;
-                    
-                    const opt = `<option value="${sub.subject_id}">${sub.subject_code} - ${sub.name}</option>`;
-                    selectors.forEach(sel => sel.innerHTML += opt);
-                });
-                
-                document.getElementById('kpi-students').textContent = totalStudents;
-            } catch(e) {}
+    // --- Course Creation Modal ---
+    const createCourseModal = document.getElementById('create-course-modal');
+    document.getElementById('btn-open-create-course').addEventListener('click', () => createCourseModal.classList.add('active'));
+    document.getElementById('btn-close-create-course').addEventListener('click', () => createCourseModal.classList.remove('active'));
+    document.getElementById('btn-cancel-create-course').addEventListener('click', () => createCourseModal.classList.remove('active'));
+
+    document.getElementById('btn-submit-create-course').addEventListener('click', async () => {
+      const codeInput = document.getElementById('c-code');
+      const nameInput = document.getElementById('c-name');
+      const secInput = document.getElementById('c-sec');
+
+      const v1 = SnapClass.validateInput(codeInput, val => val.trim().length > 0, 'Required.');
+      const v2 = SnapClass.validateInput(nameInput, val => val.trim().length > 0, 'Required.');
+      const v3 = SnapClass.validateInput(secInput, val => val.trim().length > 0, 'Required.');
+      if (!v1 || !v2 || !v3) return;
+
+      const btn = document.getElementById('btn-submit-create-course');
+      SnapClass.setLoading(btn, true);
+
+      try {
+        await SnapClass.postJson('/subjects/create', {
+          subject_code: codeInput.value.trim(),
+          name: nameInput.value.trim(),
+          section: secInput.value.trim(),
+          teacher_id: activeTeacher.teacher_id
+        });
+        SnapClass.showToast('Course Created Successfully! 🎉', 'success');
+        createCourseModal.classList.remove('active');
+        codeInput.value = '';
+        nameInput.value = '';
+        secInput.value = '';
+        loadTeacherCourses();
+      } catch (err) {
+        SnapClass.showAlert('create-course-alert', err.message || 'Creation failed.', 'error');
+      } finally {
+        SnapClass.setLoading(btn, false, 'Create Subject');
+      }
+    });
+
+    // --- QR Projector Studio ---
+    const btnToggleProj = document.getElementById('btn-toggle-projector');
+    const qrContainer = document.getElementById('qr-live-container');
+
+    btnToggleProj.addEventListener('click', () => {
+      const subId = document.getElementById('studio-course-select').value;
+      if (!subId) return SnapClass.showToast('Please select a course session first.', 'warning');
+
+      if (qrTimerInterval) {
+        // Stop projector
+        clearInterval(qrTimerInterval);
+        clearInterval(qrSecondCounterInterval);
+        qrTimerInterval = null;
+        qrContainer.style.display = 'none';
+        btnToggleProj.innerHTML = '<span>📽️ Launch Projector</span>';
+        btnToggleProj.className = 'btn btn-secondary';
+        return;
+      }
+
+      // Launch projector
+      qrContainer.style.display = 'block';
+      btnToggleProj.innerHTML = '<span>⏹️ Stop Projector</span>';
+      btnToggleProj.className = 'btn btn-danger';
+
+      const qrcodeBox = document.getElementById('qrcode-box');
+      qrcodeBox.innerHTML = '';
+      qrCodeRenderer = new QRCode(qrcodeBox, {
+        width: 220,
+        height: 220,
+        colorDark: '#0F172A',
+        colorLight: '#FFFFFF',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      const refreshQR = async () => {
+        try {
+          const res = await SnapClass.get(`/attendance/qr-token?subject_id=${subId}`);
+          const scanUrl = `${window.location.origin}/student.html?qr-token=${res.token}&subject-id=${subId}`;
+          qrCodeRenderer.makeCode(scanUrl);
+          document.getElementById('qr-passcode-badge').textContent = res.token;
+
+          let secondsLeft = 5;
+          document.getElementById('qr-countdown-seconds').textContent = secondsLeft;
+          if (qrSecondCounterInterval) clearInterval(qrSecondCounterInterval);
+          qrSecondCounterInterval = setInterval(() => {
+            secondsLeft--;
+            if (secondsLeft >= 0) document.getElementById('qr-countdown-seconds').textContent = secondsLeft;
+          }, 1000);
+        } catch (err) {
+          SnapClass.showToast('QR Token generation error', 'error');
+        }
+      };
+
+      refreshQR();
+      qrTimerInterval = setInterval(refreshQR, 5000);
+    });
+
+    // --- Classroom Photo Multi-Face Recognition ---
+    const dropZone = document.getElementById('drop-photo-zone');
+    const photoInput = document.getElementById('classroom-photo-input');
+    const previewBox = document.getElementById('photo-preview-box');
+    const previewImg = document.getElementById('photo-preview-img');
+    const previewName = document.getElementById('photo-preview-name');
+
+    dropZone.addEventListener('click', () => photoInput.click());
+
+    photoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      previewName.textContent = file.name;
+      previewImg.src = URL.createObjectURL(file);
+      previewBox.style.display = 'flex';
+    });
+
+    document.getElementById('btn-process-classroom-photo').addEventListener('click', async () => {
+      const subId = document.getElementById('studio-course-select').value;
+      const file = photoInput.files[0];
+
+      if (!subId) return SnapClass.showToast('Select an active course session.', 'warning');
+      if (!file) return SnapClass.showToast('Please select or drop a classroom photo.', 'warning');
+
+      const btn = document.getElementById('btn-process-classroom-photo');
+      SnapClass.setLoading(btn, true);
+
+      const resultBox = document.getElementById('photo-scan-results');
+      resultBox.style.display = 'block';
+      resultBox.className = 'alert-banner alert-warning active';
+      resultBox.textContent = 'Processing neural face descriptors across enrolled roster...';
+
+      try {
+        const formData = new FormData();
+        formData.append('subject_id', subId);
+        formData.append('image', file);
+
+        const res = await SnapClass.postForm('/attendance/photo-scan', formData);
+        resultBox.className = 'alert-banner alert-success active';
+        resultBox.innerHTML = `
+          <div>
+            <strong>Scan Complete!</strong> Matched <strong>${res.students_matched}</strong> out of <strong>${res.faces_detected}</strong> faces in image. Attendance successfully recorded.
+          </div>
+        `;
+        SnapClass.showToast('Classroom Attendance Logged! 📸', 'success');
+        loadTeacherCourses();
+      } catch (err) {
+        resultBox.className = 'alert-banner alert-error active';
+        resultBox.textContent = err.message || 'Failed to process classroom photo.';
+      } finally {
+        SnapClass.setLoading(btn, false, 'Scan & Log Attendance');
+      }
+    });
+
+    // --- ML Risk Radar Loading ---
+    document.getElementById('radar-course-select').addEventListener('change', async (e) => {
+      const subId = e.target.value;
+      const tbody = document.getElementById('risk-radar-tbody');
+
+      if (!subId) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">Select a course above to run ML risk models.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;">Running Scikit-Learn Logistic Regression on history...</td></tr>';
+
+      try {
+        const res = await SnapClass.get(`/insights/risk/${subId}`);
+        tbody.innerHTML = '';
+
+        if (!res.data || res.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">No attendance records found for this course yet.</td></tr>';
+          return;
         }
 
-        // Create Subject
-        document.getElementById('btn-create-sub').addEventListener('click', async () => {
-            const code = document.getElementById('sub-code').value;
-            const name = document.getElementById('sub-name').value;
-            const sec = document.getElementById('sub-section').value;
-            
-            try {
-                await SnapClassAPI.postJson('/subjects/create', {
-                    subject_code: code,
-                    name: name,
-                    section: sec,
-                    teacher_id: currentTeacher.teacher_id
-                });
-                SnapClassAPI.showToast("Subject Created!");
-                document.getElementById('create-subject-modal').classList.remove('active');
-                loadSubjects();
-            } catch(e) {}
-        });
+        res.data.forEach(row => {
+          let badgeHtml = '<span class="badge badge-safe">🟢 Safe</span>';
+          if (row.tier === 'AT RISK') badgeHtml = '<span class="badge badge-warning">🟡 At Risk</span>';
+          if (row.tier === 'CRITICAL') badgeHtml = '<span class="badge badge-critical">🔴 Critical Defaulter</span>';
 
-        // Photo Scan
-        document.getElementById('btn-photo-scan').addEventListener('click', async () => {
-            const sid = document.getElementById('studio-subject-select').value;
-            const file = document.getElementById('photo-upload').files[0];
-            
-            if(!sid || !file) return SnapClassAPI.showToast("Select subject and upload photo", "error");
-            
-            const btn = document.getElementById('btn-photo-scan');
-            btn.textContent = "Processing...";
-            btn.disabled = true;
-            
-            const fd = new FormData();
-            fd.append('subject_id', sid);
-            fd.append('image', file);
-            
-            try {
-                const res = await SnapClassAPI.postForm('/attendance/photo-scan', fd);
-                document.getElementById('photo-results').textContent = `Matched ${res.students_matched} out of ${res.faces_detected} faces detected in photo!`;
-                SnapClassAPI.showToast("Attendance logged.");
-            } catch(e) {} finally {
-                btn.textContent = "Process Image";
-                btn.disabled = false;
-            }
+          tbody.innerHTML += `
+            <tr>
+              <td>
+                <div style="font-weight: 700; color: var(--text-main);">${row.name}</div>
+                <div style="font-size: 0.75rem; color: var(--text-dim);">ID: #${row.student_id}</div>
+              </td>
+              <td>
+                <div style="font-size: 1.1rem; font-weight: 800; color: ${row.color};">${row.pct}%</div>
+              </td>
+              <td>${badgeHtml}</td>
+              <td style="color: var(--text-muted); font-size: 0.88rem; max-width: 320px; line-height: 1.4;">
+                ${row.recommendation}
+              </td>
+            </tr>
+          `;
         });
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--critical); padding: 2rem;">Failed to compute ML risk radar.</td></tr>';
+      }
+    });
 
-        // QR Projector
-        document.getElementById('btn-start-qr').addEventListener('click', () => {
-            const sid = document.getElementById('studio-subject-select').value;
-            if(!sid) return SnapClassAPI.showToast("Select a subject first", "error");
-            
-            document.getElementById('qr-display').style.display = 'block';
-            
-            if(qrInterval) clearInterval(qrInterval);
-            if(countdownInterval) clearInterval(countdownInterval);
-            
-            let qrcode = new QRCode(document.getElementById("qrcode"), {
-                width: 256,
-                height: 256,
-                colorDark : "#1E1B4B",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
-            
-            const updateQR = async () => {
-                try {
-                    const res = await SnapClassAPI.get(`/attendance/qr-token?subject_id=${sid}`);
-                    const url = `${window.location.origin}/student.html?qr-token=${res.token}&subject-id=${sid}`;
-                    qrcode.makeCode(url);
-                    document.getElementById('qr-text').textContent = res.token;
-                    
-                    let count = 5;
-                    document.getElementById('qr-countdown').textContent = count;
-                    if(countdownInterval) clearInterval(countdownInterval);
-                    countdownInterval = setInterval(() => {
-                        count--;
-                        if(count > 0) document.getElementById('qr-countdown').textContent = count;
-                    }, 1000);
-                } catch(e) {}
-            };
-            
-            updateQR();
-            qrInterval = setInterval(updateQR, 5000);
-            
-            // Clean up qr project on button swap
-            const btn = document.getElementById('btn-start-qr');
-            btn.textContent = "Stop Projector";
-            btn.classList.replace('btn-secondary', 'btn-danger');
-            btn.onclick = () => {
-                clearInterval(qrInterval);
-                clearInterval(countdownInterval);
-                document.getElementById('qr-display').style.display = 'none';
-                document.getElementById('qrcode').innerHTML = '';
-                btn.textContent = "Launch Projector";
-                btn.classList.replace('btn-danger', 'btn-secondary');
-                // restore original listener by cloning
-                const newBtn = btn.cloneNode(true);
-                btn.parentNode.replaceChild(newBtn, btn);
-                // I won't re-attach properly in this simple script without a named function,
-                // but this is standard vanilla prototyping.
-            };
-        });
+    // --- CSV Export ---
+    document.getElementById('btn-trigger-export').addEventListener('click', () => {
+      const subId = document.getElementById('export-course-select').value;
+      if (!subId) return SnapClass.showToast('Please select a course to export.', 'warning');
+      window.location.href = `${API_BASE}/exports/attendance/${subId}`;
+      SnapClass.showToast('Generating CSV report...', 'info');
+    });
 
-        // Radar Tab
-        document.getElementById('radar-subject-select').addEventListener('change', async (e) => {
-            const sid = e.target.value;
-            const tbody = document.getElementById('radar-table-body');
-            
-            if(!sid) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center" style="padding: 2rem; color: var(--text-muted);">Select a subject to load ML analytics.</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center" style="padding: 2rem;">Loading ML Risk Models...</td></tr>';
-            
-            try {
-                const res = await SnapClassAPI.get(`/insights/risk/${sid}`);
-                tbody.innerHTML = '';
-                
-                if(res.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center" style="padding: 2rem;">No attendance data found for this subject.</td></tr>';
-                    return;
-                }
-                
-                res.data.forEach(row => {
-                    let badgeClass = row.tier === 'SAFE' ? 'badge-safe' : (row.tier === 'AT RISK' ? 'badge-warning' : 'badge-critical');
-                    
-                    tbody.innerHTML += `
-                        <tr style="border-bottom: 1px solid #F1F5F9;">
-                            <td style="padding: 1rem 0.5rem; font-weight:600;">${row.name} <div style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">ID: ${row.student_id}</div></td>
-                            <td style="font-weight:700; color:var(--indigo);">${row.pct}%</td>
-                            <td><span class="badge ${badgeClass}">${row.label}</span></td>
-                            <td style="font-size:0.85rem; color:var(--text-muted); max-width:200px;">${row.recommendation}</td>
-                        </tr>
-                    `;
-                });
-            } catch(e) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center" style="padding: 2rem; color:var(--critical);">Failed to load analytics</td></tr>';
-            }
-        });
-
-        // Export
-        document.getElementById('btn-export-csv').addEventListener('click', () => {
-            const sid = document.getElementById('export-subject-select').value;
-            if(!sid) return SnapClassAPI.showToast("Select a subject first", "error");
-            window.location.href = `${API_BASE}/exports/attendance/${sid}`;
-        });
-    </script>
+    document.getElementById('btn-teacher-logout').addEventListener('click', () => location.reload());
+  </script>
 </body>
 </html>

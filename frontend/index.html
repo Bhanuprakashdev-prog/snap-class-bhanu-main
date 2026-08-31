@@ -1,45 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SnapClass | AI Attendance Platform</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SnapClass | Next-Gen AI Attendance Platform</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <header>
-        <h1 class="brand-title">SnapClass</h1>
-    </header>
-
-    <div class="container text-center mt-4">
-        <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Select your portal</h2>
-        <p class="mb-2" style="color: var(--text-muted); font-size: 1.1rem;">Secure, AI-powered attendance tracking.</p>
-        
-        <div class="grid-2 mt-4" style="max-width: 800px; margin-left: auto; margin-right: auto;">
-            <!-- Student Portal -->
-            <div class="card">
-                <div style="font-size: 3rem; margin-bottom: 1rem;">👨‍🎓</div>
-                <h3 class="card-title">Student Portal</h3>
-                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">FaceID Check-in, What-If Simulator & Habits</p>
-                <a href="student.html" class="btn btn-primary" style="width: 100%;">Enter as Student</a>
-            </div>
-
-            <!-- Teacher Portal -->
-            <div class="card">
-                <div style="font-size: 3rem; margin-bottom: 1rem;">👨‍🏫</div>
-                <h3 class="card-title">Teacher Portal</h3>
-                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">QR Studio, Risk Radar & Class Management</p>
-                <a href="teacher.html" class="btn btn-secondary" style="width: 100%;">Enter as Teacher</a>
-            </div>
-            
-            <!-- Admin Portal -->
-            <div class="card" style="grid-column: 1 / -1; max-width: 400px; margin: 0 auto; margin-top: 1rem;">
-                <div style="font-size: 2.5rem; margin-bottom: 1rem;">🏛️</div>
-                <h3 class="card-title">Admin & HOD</h3>
-                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Institutional Defaulters & KPIs</p>
-                <a href="admin.html" class="btn" style="background-color: var(--indigo); color: white; width: 100%;">Enter as Admin</a>
-            </div>
-        </div>
+  <header>
+    <div class="brand-title">SnapClass</div>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <span class="badge badge-primary">
+        <span class="pulse-dot"></span>
+        AI Core Online
+      </span>
     </div>
+  </header>
+
+  <main class="container" style="text-align: center; padding-top: clamp(2rem, 5vw, 4rem);">
+    <div class="animate-fade-in" style="max-width: 780px; margin: 0 auto 3rem auto;">
+      <span class="badge badge-pink" style="margin-bottom: 1.25rem;">✨ Smart Biometric Roll-Call & Predictive Analytics</span>
+      <h1 style="font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1.1; margin-bottom: 1rem;">
+        Intelligent Attendance for the <span style="background: linear-gradient(135deg, #6366F1, #EC4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Modern Classroom</span>
+      </h1>
+      <p style="color: var(--text-muted); font-size: clamp(1rem, 2vw, 1.2rem); line-height: 1.6; max-width: 620px; margin: 0 auto;">
+        Real-time WebRTC FaceID check-ins, dynamic anti-proxy QR codes, and ML-powered attendance risk forecasting.
+      </p>
+    </div>
+
+    <!-- Portal Selection Cards -->
+    <div class="grid-cards" style="max-width: 1080px; margin: 0 auto;">
+      
+      <!-- Student Portal -->
+      <div class="glass-card glass-card-hover" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+            <div style="font-size: 2.75rem; background: rgba(99, 102, 241, 0.15); width: 64px; height: 64px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(99, 102, 241, 0.3);">
+              👨‍🎓
+            </div>
+            <span class="badge badge-primary">Student</span>
+          </div>
+          <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Student Portal</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">
+            Instant FaceID verification, interactive What-If attendance simulators, streak analytics, and personalized recovery roadmaps.
+          </p>
+        </div>
+        <a href="student.html" class="btn btn-primary" style="width: 100%;">
+          <span>Launch Student Portal</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+
+      <!-- Teacher Portal -->
+      <div class="glass-card glass-card-hover" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+            <div style="font-size: 2.75rem; background: rgba(236, 72, 153, 0.15); width: 64px; height: 64px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(236, 72, 153, 0.3);">
+              👨‍🏫
+            </div>
+            <span class="badge badge-pink">Instructor</span>
+          </div>
+          <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Teacher Studio</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">
+            Live 5s rotating QR projector, multi-face classroom photo recognition, scikit-learn risk radar, and official CSV exports.
+          </p>
+        </div>
+        <a href="teacher.html" class="btn btn-secondary" style="width: 100%;">
+          <span>Launch Teacher Studio</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+
+      <!-- Admin Portal -->
+      <div class="glass-card glass-card-hover" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+            <div style="font-size: 2.75rem; background: rgba(6, 182, 212, 0.15); width: 64px; height: 64px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(6, 182, 212, 0.3);">
+              🏛️
+            </div>
+            <span class="badge" style="background: rgba(6, 182, 212, 0.15); color: #67E8F9; border: 1px solid rgba(6, 182, 212, 0.3);">Dean & HOD</span>
+          </div>
+          <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Institution Admin</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">
+            Campus-wide attendance KPIs, faculty compliance tracking, and aggregated &lt;75% debarred examination lists.
+          </p>
+        </div>
+        <a href="admin.html" class="btn btn-cyan" style="width: 100%;">
+          <span>Launch Admin Portal</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Security & Architecture Badge Footer -->
+    <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-glass); display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; color: var(--text-dim); font-size: 0.85rem;">
+      <span>🔒 Zero-Trust Biometrics</span>
+      <span>•</span>
+      <span>⚡ FastAPI In-Memory Processing</span>
+      <span>•</span>
+      <span>📱 4:3 WebRTC Viewfinder</span>
+      <span>•</span>
+      <span>🛡️ OWASP Hardened</span>
+    </div>
+  </main>
 </body>
 </html>
