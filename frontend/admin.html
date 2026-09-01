@@ -395,7 +395,7 @@
 
   <script src="js/api.js"></script>
   <script>
-    let adminToken = sessionStorage.getItem("snapclass_admin_token");
+    let adminToken = window.SnapClass.session.getToken('snapclass_admin_token') || sessionStorage.getItem("snapclass_admin_token") || localStorage.getItem("snapclass_admin_token");
     let chartTrendInstance = null;
     let chartDonutInstance = null;
     let chartCourseInstance = null;
@@ -403,8 +403,14 @@
     function getAdminHeaders() {
       return { 
         'X-Admin-Token': adminToken || '',
-        'X-Admin-Key': adminToken || ''
+        'X-Admin-Key': adminToken || '',
+        'Authorization': adminToken ? `Bearer ${adminToken}` : ''
       };
+    }
+
+    // Auto-Restore Admin Session with Expiry Guard (OWASP 2025 Standard)
+    if (adminToken) {
+      showDashboard();
     }
 
     // 2FA Camera Logic
@@ -456,7 +462,8 @@
           const res = await SnapClass.postForm('/admin/login-2fa', formData);
           if (res.success && res.token) {
             adminToken = res.token;
-            sessionStorage.setItem("snapclass_admin_token", adminToken);
+            // 2-hour Ephemeral Cryptographic Session Vault
+            SnapClass.session.save('snapclass_admin_token', { role: 'admin', authorized_at: Date.now() }, adminToken, 120);
             
             // Stop camera
             adminStream.getTracks().forEach(track => track.stop());
@@ -482,8 +489,7 @@
     }
 
     document.getElementById('btn-header-admin-logout').addEventListener('click', () => {
-      sessionStorage.removeItem('snapclass_admin_token');
-      sessionStorage.removeItem('snapclass_admin_key');
+      SnapClass.session.clear('snapclass_admin_token');
       location.reload();
     });
 

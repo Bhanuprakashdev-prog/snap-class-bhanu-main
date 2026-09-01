@@ -202,27 +202,46 @@
           
           <div style="max-width: 380px; margin-bottom: 1.25rem;">
             <label class="input-label" for="studio-course-select">Select Active Course Session</label>
-            <select id="studio-course-select" class="input-control"></select>
+            <select id="studio-course-select" class="input-control">
+              <option value="">-- Choose Course to Take Attendance --</option>
+            </select>
           </div>
 
           <div class="grid-cards">
             
             <!-- Live QR Projector Frame -->
-            <div class="card" style="background: var(--surface-subtle); box-shadow: none; text-align: center;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
-                <span class="badge badge-primary">Anti-Proxy QR</span>
-                <span class="badge badge-safe">
-                  <span class="pulse-dot"></span> Rotating Every 5s
-                </span>
-              </div>
-              
-              <div style="background: #FFFFFF; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-light); display: inline-block; margin: 0 auto 1rem;">
-                <canvas id="qr-canvas" style="display: block; margin: 0 auto; max-width: 100%; height: auto;"></canvas>
+            <div class="card" style="background: var(--surface-subtle); box-shadow: none; text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+                  <span class="badge badge-primary">Anti-Proxy QR</span>
+                  <span id="qr-session-badge" class="badge" style="background: #E2E8F0; color: #64748B;">
+                    <span class="pulse-dot" style="background: #94A3B8;"></span> Standby
+                  </span>
+                </div>
+                
+                <div id="qr-canvas-box" style="background: #FFFFFF; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-light); display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 1rem; width: 220px; height: 220px; box-sizing: border-box;">
+                  <div id="qr-standby-placeholder" style="color: var(--text-muted); font-size: 0.82rem; padding: 0.5rem; text-align: center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon-svg icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 0.5rem; display: block; opacity: 0.5;">
+                      <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01M12 12h.01"/>
+                    </svg>
+                    <span>Select a course & tap <strong>Start Session</strong>.</span>
+                  </div>
+                  <canvas id="qr-canvas" style="display: none; margin: 0 auto; max-width: 100%; height: auto;"></canvas>
+                </div>
+
+                <div>
+                  <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">SESSION PASSCODE</div>
+                  <div id="qr-token-display" style="font-family: monospace; font-size: 1.6rem; font-weight: 800; letter-spacing: 0.15em; color: var(--primary);">--------</div>
+                </div>
               </div>
 
-              <div>
-                <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">SESSION PASSCODE</div>
-                <div id="qr-token-display" style="font-family: monospace; font-size: 1.6rem; font-weight: 800; letter-spacing: 0.15em; color: var(--primary);">--------</div>
+              <div style="margin-top: 1rem;">
+                <button id="btn-toggle-qr-session" class="btn btn-primary" style="width: 100%;">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon-svg icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="6 3 20 12 6 21 6 3"/>
+                  </svg>
+                  <span>Start Live QR Session</span>
+                </button>
               </div>
             </div>
 
@@ -442,6 +461,16 @@
     let qrRefreshInterval = null;
     let teacherCoursesCache = [];
 
+    // Auto-Restore Active Session with Expiry Guard (OWASP 2025 Standard)
+    const savedTeacher = SnapClass.session.get('snapclass_teacher');
+    if (savedTeacher) {
+      activeTeacher = savedTeacher;
+      document.getElementById('teacher-auth-view').style.display = 'none';
+      document.getElementById('teacher-dashboard').style.display = 'block';
+      document.getElementById('btn-header-t-logout').style.display = 'inline-flex';
+      initTeacherDashboard();
+    }
+
     // Login Form
     const btnLogin = document.getElementById('btn-t-login');
     btnLogin.addEventListener('click', async () => {
@@ -463,7 +492,8 @@
 
         if (res.success && res.teacher) {
           activeTeacher = res.teacher;
-          sessionStorage.setItem('snapclass_teacher', JSON.stringify(res.teacher));
+          // Secure 8-hour cryptographic session envelope
+          SnapClass.session.save('snapclass_teacher', res.teacher, res.token, 480);
           SnapClass.showToast(`Welcome back, ${res.teacher.name}!`, 'success');
           document.getElementById('teacher-auth-view').style.display = 'none';
           document.getElementById('teacher-dashboard').style.display = 'block';
@@ -514,7 +544,6 @@
       document.getElementById('teacher-greeting').textContent = `${activeTeacher.name}'s Studio`;
       populateProfileForm();
       await loadTeacherCourses();
-      startQrCycle();
     }
 
     function populateProfileForm() {
@@ -545,7 +574,7 @@
         const res = await SnapClass.putJson(`/auth/teacher/profile/${activeTeacher.teacher_id}`, payload);
         if (res.success && res.teacher) {
           activeTeacher = res.teacher;
-          sessionStorage.setItem('snapclass_teacher', JSON.stringify(res.teacher));
+          SnapClass.session.save('snapclass_teacher', res.teacher, SnapClass.session.getToken('snapclass_teacher'), 480);
           document.getElementById('teacher-greeting').textContent = `${activeTeacher.name}'s Studio`;
           SnapClass.showToast('Profile settings updated successfully.', 'success');
         }
@@ -568,9 +597,9 @@
         const radarSel = document.getElementById('radar-course-select');
         const exportSel = document.getElementById('export-course-select');
 
-        studioSel.innerHTML = '';
-        radarSel.innerHTML = '<option value="">Select course...</option>';
-        exportSel.innerHTML = '';
+        studioSel.innerHTML = '<option value="">-- Choose Course to Take Attendance --</option>';
+        radarSel.innerHTML = '<option value="">-- Select Course --</option>';
+        exportSel.innerHTML = '<option value="">-- Select Course --</option>';
 
         teacherCoursesCache.forEach(c => {
           const opt = `<option value="${c.subject_id}">${c.name} (${c.subject_code} - Sec ${c.section})</option>`;
@@ -608,33 +637,113 @@
       }
     }
 
-    // QR Code Engine
+    // QR Code Engine Controls
+    const btnToggleQr = document.getElementById('btn-toggle-qr-session');
+    const qrBadge = document.getElementById('qr-session-badge');
+    const qrPlaceholder = document.getElementById('qr-standby-placeholder');
+    const qrCanvas = document.getElementById('qr-canvas');
+    const qrTokenDisplay = document.getElementById('qr-token-display');
+
+    function stopQrCycle() {
+      if (qrRefreshInterval) {
+        clearInterval(qrRefreshInterval);
+        qrRefreshInterval = null;
+      }
+      qrBadge.className = 'badge';
+      qrBadge.style.background = '#E2E8F0';
+      qrBadge.style.color = '#64748B';
+      qrBadge.innerHTML = '<span class="pulse-dot" style="background: #94A3B8;"></span> Standby';
+      btnToggleQr.className = 'btn btn-primary';
+      btnToggleQr.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon-svg icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="6 3 20 12 6 21 6 3"/>
+        </svg>
+        <span>Start Live QR Session</span>
+      `;
+      qrCanvas.style.display = 'none';
+      qrPlaceholder.style.display = 'block';
+      qrTokenDisplay.textContent = '--------';
+    }
+
     function startQrCycle() {
+      const sel = document.getElementById('studio-course-select');
+      const subjectId = sel.value;
+      if (!subjectId) {
+        SnapClass.showToast('Please choose a course session first.', 'warning');
+        return;
+      }
+
       if (qrRefreshInterval) clearInterval(qrRefreshInterval);
+      
+      qrPlaceholder.style.display = 'none';
+      qrCanvas.style.display = 'block';
+      qrBadge.className = 'badge badge-safe';
+      qrBadge.style.background = '';
+      qrBadge.style.color = '';
+      qrBadge.innerHTML = '<span class="pulse-dot"></span> Live (5s Rotating)';
+      btnToggleQr.className = 'btn btn-danger';
+      btnToggleQr.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon-svg icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="6" width="12" height="12" rx="2"/>
+        </svg>
+        <span>Stop QR Session</span>
+      `;
+
       refreshQrCode();
       qrRefreshInterval = setInterval(refreshQrCode, 5000);
+      SnapClass.showToast('Live anti-proxy QR session started.', 'success');
     }
+
+    btnToggleQr.addEventListener('click', () => {
+      if (qrRefreshInterval) {
+        stopQrCycle();
+        SnapClass.showToast('QR session paused.', 'info');
+      } else {
+        startQrCycle();
+      }
+    });
 
     async function refreshQrCode() {
       const sel = document.getElementById('studio-course-select');
       const subjectId = sel.value;
-      if (!subjectId) return;
+      if (!subjectId) {
+        stopQrCycle();
+        return;
+      }
 
       try {
         const res = await SnapClass.get(`/attendance/qr-token?subject_id=${subjectId}`);
         if (res.token) {
-          document.getElementById('qr-token-display').textContent = res.token;
+          qrTokenDisplay.textContent = res.token;
           const qrPayload = JSON.stringify({ subject_id: parseInt(subjectId), token: res.token });
-          QRCode.toCanvas(document.getElementById('qr-canvas'), qrPayload, {
-            width: 220,
+          QRCode.toCanvas(qrCanvas, qrPayload, {
+            width: 190,
             margin: 1,
             color: { dark: '#0F172A', light: '#FFFFFF' }
           });
         }
-      } catch (e) {}
+      } catch (e) {
+        console.warn('QR token refresh error:', e);
+      }
     }
 
-    document.getElementById('studio-course-select').addEventListener('change', refreshQrCode);
+    document.getElementById('studio-course-select').addEventListener('change', () => {
+      if (qrRefreshInterval) {
+        refreshQrCode();
+      } else {
+        stopQrCycle();
+      }
+    });
+
+    // Pause QR when switching tabs to eliminate background traffic
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.target;
+        if (target !== 'tab-studio' && qrRefreshInterval) {
+          stopQrCycle();
+        }
+      });
+    });
 
     // Multi-Face Recognition
     document.getElementById('btn-process-multi-face').addEventListener('click', async () => {
@@ -806,7 +915,7 @@
     };
 
     document.getElementById('btn-header-t-logout').addEventListener('click', () => {
-      sessionStorage.removeItem('snapclass_teacher');
+      SnapClass.session.clear('snapclass_teacher');
       location.reload();
     });
   </script>

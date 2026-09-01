@@ -480,6 +480,17 @@
     let studentRadarCache = null;
     let qrCodeScannerInstance = null;
 
+    // Auto-Restore Active Student Session with Expiry Guard (OWASP 2025 Standard)
+    const savedStudentId = SnapClass.session.get('snapclass_student');
+    if (savedStudentId) {
+      activeStudentId = parseInt(savedStudentId);
+      document.getElementById('student-login-view').style.display = 'none';
+      document.getElementById('student-dashboard').style.display = 'block';
+      document.getElementById('btn-header-logout').style.display = 'inline-flex';
+      loadStudentDashboard();
+      checkUrlForQrParams();
+    }
+
     // Login Face ID
     const btnStartCam = document.getElementById('btn-start-student-cam');
     const btnVerifyFace = document.getElementById('btn-verify-face');
@@ -510,6 +521,8 @@
 
         if (res.success && res.student_id) {
           activeStudentId = res.student_id;
+          // Secure 24-hour cryptographic session envelope
+          SnapClass.session.save('snapclass_student', res.student_id, res.token, 1440);
           SnapClass.showToast('Identity Verified! Welcome.', 'success');
           CameraEngine.stop();
           document.getElementById('student-login-view').style.display = 'none';
@@ -972,7 +985,11 @@
       }
     });
 
-    document.getElementById('btn-header-logout').addEventListener('click', () => location.reload());
+    document.getElementById('btn-header-logout').addEventListener('click', () => {
+      SnapClass.session.clear('snapclass_student');
+      SnapClass.session.clear('snapclass_student_id');
+      location.reload();
+    });
   </script>
 </body>
 </html>

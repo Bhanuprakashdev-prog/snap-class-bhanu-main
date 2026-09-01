@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from src.database.config import supabase
 from src.pipelines.face_pipeline import get_face_embeddings
 from src.pipelines.risk_predictor import compute_risk
+from src.utils.security import generate_session_token, verify_session_token
 
 router = APIRouter()
 
@@ -19,7 +20,7 @@ ADMIN_SECRET_KEY = os.environ.get("ADMIN_KEY", "admin123")
 CURRENT_TUNING_THRESHOLD = 0.55  # Default Euclidean distance threshold
 ADMIN_FACE_VECTOR_FILE = os.path.join(os.path.dirname(__file__), "..", "..", "src", "database", "admin_face_vector.json")
 
-# In-Memory Active Sessions & Audit Log (Single device/IP binding)
+# In-Memory Active Sessions & Audit Log
 active_sessions: Dict[str, Dict[str, Any]] = {}
 admin_auth_logs: List[Dict[str, Any]] = []
 
@@ -61,15 +62,17 @@ def save_admin_face_vector(vector_np):
 def verify_admin(request: Request, x_admin_token: str = Header(None, alias="X-Admin-Token"), x_admin_key: str = Header(None, alias="X-Admin-Key")):
     token = x_admin_token or x_admin_key
     
-    # 1. Check if token is in active sessions (valid 2FA login session)
-    if token and token in active_sessions:
-        return True
+    # 1. Cryptographic HMAC Token Verification (Stateless & Secure)
+    if token:
+        claims = verify_session_token(token, "admin")
+        if claims:
+            return True
+        if token in active_sessions:
+            return True
+        if token == ADMIN_SECRET_KEY:
+            return True
 
-    # 2. Check for master secret key override
-    if token and token == ADMIN_SECRET_KEY:
-        return True
-
-    raise HTTPException(status_code=401, detail="Unauthorized: Admin access requires a valid session token.")
+    raise HTTPException(status_code=401, detail="Unauthorized: Admin session expired or invalid. Please re-authenticate.")
 
 class TuningRequest(BaseModel):
     threshold: float
@@ -123,8 +126,8 @@ async def register_admin_face(
     admin_vec = encodings[0]
     save_admin_face_vector(admin_vec)
 
-    # Create bound session
-    session_token = secrets.token_urlsafe(32)
+    # Create signed HMAC session token (2-hour TTL)
+    session_token = generate_session_token("admin", "admin", ttl_seconds=7200)
     active_sessions[session_token] = {
         "ip": client_ip,
         "user_agent": user_agent,
@@ -137,6 +140,7 @@ async def register_admin_face(
         "success": True,
         "token": session_token,
         "bound_ip": client_ip,
+        "expires_in": 7200,
         "message": f"Master Admin Face enrolled successfully. Bound to IP {client_ip}."
     }
 
@@ -165,27 +169,27 @@ async def admin_login_2fa(
     if not image:
         raise HTTPException(status_code=400, detail="Face biometric capture required for 2FA verification.")
         
-        image_bytes = await image.read()
-        try:
-            img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-            img_np = np.array(img)
-        except Exception:
-            raise HTTPException(status_code=400, detail="Corrupted image capture.")
+    image_bytes = await image.read()
+    try:
+        img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        img_np = np.array(img)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Corrupted image capture.")
 
-        encodings = get_face_embeddings(img_np)
-        if not encodings:
-            log_admin_attempt(client_ip, user_agent, "BIOMETRIC_FAIL", "No face detected in camera frame")
-            raise HTTPException(status_code=401, detail="No face detected. Please look directly into the camera.")
+    encodings = get_face_embeddings(img_np)
+    if not encodings:
+        log_admin_attempt(client_ip, user_agent, "BIOMETRIC_FAIL", "No face detected in camera frame")
+        raise HTTPException(status_code=401, detail="No face detected. Please look directly into the camera.")
 
-        dist = float(np.linalg.norm(admin_face_vec - encodings[0]))
-        confidence = max(0.0, (1.0 - (dist / 0.6)) * 100.0)
+    dist = float(np.linalg.norm(admin_face_vec - encodings[0]))
+    confidence = max(0.0, (1.0 - (dist / 0.6)) * 100.0)
 
-        if dist > 0.48:  # Strict 0.48 threshold for admin 2FA
-            log_admin_attempt(client_ip, user_agent, "BIOMETRIC_FAIL", f"Face mismatch: distance {dist:.2f}", face_match=confidence)
-            raise HTTPException(status_code=401, detail=f"Admin Face Biometric Mismatch (Distance: {dist:.2f}). Access Denied.")
+    if dist > 0.48:  # Strict 0.48 threshold for admin 2FA
+        log_admin_attempt(client_ip, user_agent, "BIOMETRIC_FAIL", f"Face mismatch: distance {dist:.2f}", face_match=confidence)
+        raise HTTPException(status_code=401, detail=f"Admin Face Biometric Mismatch (Distance: {dist:.2f}). Access Denied.")
 
-    # Generate session bound to this IP
-    session_token = secrets.token_urlsafe(32)
+    # Generate signed HMAC session token (2-hour TTL)
+    session_token = generate_session_token("admin", "admin", ttl_seconds=7200)
     active_sessions[session_token] = {
         "ip": client_ip,
         "user_agent": user_agent,
@@ -199,6 +203,7 @@ async def admin_login_2fa(
         "token": session_token,
         "bound_ip": client_ip,
         "confidence": round(confidence, 1),
+        "expires_in": 7200,
         "message": f"2FA Verified. Administrative session bound to IP {client_ip}."
     }
 

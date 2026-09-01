@@ -7,6 +7,7 @@ import io
 
 from src.database.db import teacher_login, create_teacher, create_student, check_teacher_exists
 from src.pipelines.face_pipeline import predict_attendance, get_face_embeddings
+from src.utils.security import generate_session_token, verify_session_token
 
 router = APIRouter()
 
@@ -27,6 +28,18 @@ class TeacherProfileModel(BaseModel):
     contact: Optional[str] = None
     bio: Optional[str] = None
 
+@router.get("/verify-session")
+async def verify_user_session(req: Request):
+    """Stateless cryptographic session token validator."""
+    auth_header = req.headers.get("authorization", "")
+    token = auth_header.replace("Bearer ", "").strip() if "Bearer " in auth_header else req.headers.get("x-auth-token")
+    if not token:
+        raise HTTPException(status_code=401, detail="No session token provided.")
+    claims = verify_session_token(token)
+    if not claims:
+        raise HTTPException(status_code=401, detail="Session expired or invalid.")
+    return {"success": True, "claims": claims}
+
 @router.post("/teacher/login")
 async def login_teacher(req: Request):
     """Support both JSON payload and Form data for teacher login."""
@@ -45,7 +58,13 @@ async def login_teacher(req: Request):
 
     teacher = teacher_login(username, password)
     if teacher:
-        return {"success": True, "teacher": teacher}
+        token = generate_session_token(teacher["teacher_id"], "teacher", ttl_seconds=28800)
+        return {
+            "success": True, 
+            "teacher": teacher, 
+            "token": token,
+            "expires_in": 28800
+        }
     raise HTTPException(status_code=401, detail="Invalid username or password")
 
 @router.post("/teacher/register")
@@ -120,7 +139,13 @@ async def student_face_login(image: UploadFile = File(...)):
     
     if len(detected) == 1:
         student_id = list(detected.keys())[0]
-        return {"success": True, "student_id": student_id}
+        token = generate_session_token(student_id, "student", ttl_seconds=86400)
+        return {
+            "success": True, 
+            "student_id": student_id,
+            "token": token,
+            "expires_in": 86400
+        }
     elif len(detected) > 1:
         raise HTTPException(status_code=400, detail="Multiple faces detected. Please show only one face.")
     else:
@@ -149,7 +174,10 @@ async def student_register(name: str = Form(...), image: UploadFile = File(...))
         from src.pipelines.face_pipeline import train_classifier
         train_classifier()
         
-        return {"success": True, "student": student}
+        s_id = student.get("student_id") if isinstance(student, dict) else (student[0].get("student_id") if isinstance(student, list) else None)
+        token = generate_session_token(s_id, "student", ttl_seconds=86400) if s_id else None
+
+        return {"success": True, "student": student, "student_id": s_id, "token": token, "expires_in": 86400}
     except HTTPException:
         raise
     except Exception as e:
