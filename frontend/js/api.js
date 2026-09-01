@@ -15,17 +15,17 @@ window.SnapClass = {
     }
 
     const icons = {
-      success: '✅',
-      error: '🚨',
-      warning: '⚠️',
-      info: '💡'
+      success: '<svg class="icon-svg icon-sm" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+      error: '<svg class="icon-svg icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+      warning: '<svg class="icon-svg icon-sm" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>',
+      info: '<svg class="icon-svg icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
     };
 
     const toast = document.createElement('div');
     toast.className = `toast-pill ${type}`;
     toast.innerHTML = `
       <div style="display: flex; align-items: center; gap: 0.6rem;">
-        <span style="font-size: 1.1rem;">${icons[type] || '✨'}</span>
+        <span style="display: inline-flex; align-items: center;">${icons[type] || icons.info}</span>
         <span>${message}</span>
       </div>
       <button style="background:none; border:none; color:rgba(255,255,255,0.6); cursor:pointer; font-size:1.1rem; padding:0 4px;" onclick="this.parentElement.remove()">×</button>
@@ -50,14 +50,14 @@ window.SnapClass = {
     if (!banner) return;
 
     const icons = {
-      error: '⚠️',
-      success: '🎉',
-      warning: '⚡'
+      error: '<svg class="icon-svg icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+      success: '<svg class="icon-svg icon-sm" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+      warning: '<svg class="icon-svg icon-sm" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>'
     };
 
     banner.className = `alert-banner alert-${type} active`;
     banner.innerHTML = `
-      <span>${icons[type] || 'ℹ️'}</span>
+      <span style="display: inline-flex; align-items: center;">${icons[type] || icons.error}</span>
       <span style="flex: 1;">${message}</span>
       <button style="background:none; border:none; color:inherit; cursor:pointer; font-size:1.1rem;" onclick="this.parentElement.classList.remove('active')">×</button>
     `;
@@ -112,10 +112,25 @@ window.SnapClass = {
   request: async (endpoint, options = {}) => {
     try {
       const response = await fetch(`${API_BASE}${endpoint}`, options);
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (e) {
+        data = { detail: response.statusText || 'Server error' };
+      }
 
       if (!response.ok) {
-        throw new Error(data.detail || data.message || 'Operation failed');
+        let errMessage = 'Operation failed';
+        if (typeof data.detail === 'string') {
+          errMessage = data.detail;
+        } else if (Array.isArray(data.detail)) {
+          errMessage = data.detail.map(d => d.msg || (d.loc ? `${d.loc.join('.')}: ${d.msg}` : JSON.stringify(d))).join(', ');
+        } else if (data.detail && typeof data.detail === 'object') {
+          errMessage = data.detail.msg || JSON.stringify(data.detail);
+        } else if (data.message) {
+          errMessage = data.message;
+        }
+        throw new Error(errMessage);
       }
 
       return data;
@@ -160,22 +175,33 @@ window.SnapClass = {
   }
 };
 
-// Tabs Initialization
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const container = btn.closest('.glass-card') || document;
-      container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+// Global Pill Tabs Switching Controller
+window.SnapClass.initTabs = () => {
+  document.querySelectorAll('.tabs-header').forEach(header => {
+    header.querySelectorAll('.tab-btn').forEach(btn => {
+      // Remove any existing click listener clones
+      btn.onclick = (e) => {
+        e.preventDefault();
+        const targetId = btn.getAttribute('data-target');
+        const cardParent = btn.closest('.card') || btn.closest('.glass-card') || document;
+        
+        header.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
 
-      const targetId = btn.dataset.target;
-      container.querySelectorAll('.tab-pane').forEach(pane => {
-        if (pane.id === targetId) {
-          pane.classList.add('active');
-        } else {
-          pane.classList.remove('active');
-        }
-      });
+        cardParent.querySelectorAll('.tab-pane').forEach(pane => {
+          if (pane.id === targetId) {
+            pane.classList.add('active');
+          } else {
+            pane.classList.remove('active');
+          }
+        });
+      };
     });
   });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.SnapClass && window.SnapClass.initTabs) {
+    window.SnapClass.initTabs();
+  }
 });

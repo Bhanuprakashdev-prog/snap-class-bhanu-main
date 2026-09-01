@@ -59,18 +59,14 @@ def save_admin_face_vector(vector_np):
         json.dump({"face_vector": vector_np.tolist(), "updated_at": datetime.now().isoformat()}, f)
 
 def verify_admin(request: Request, x_admin_token: str = Header(None, alias="X-Admin-Token"), x_admin_key: str = Header(None, alias="X-Admin-Key")):
-    client_ip = get_client_ip(request)
+    token = x_admin_token or x_admin_key
     
-    # 1. Check if token is valid (IP check disabled for mobile/cellular flexibility)
-    if x_admin_token and x_admin_token in active_sessions:
-        # session = active_sessions[x_admin_token]
-        # if session["ip"] != client_ip:
-        #     log_admin_attempt(client_ip, request.headers.get("User-Agent", ""), "IP_MISMATCH", f"Token hijacked or IP changed from {session['ip']}")
-        #     raise HTTPException(status_code=403, detail=f"Forbidden: Session is bound to IP {session['ip']}. Access denied from {client_ip}.")
+    # 1. Check if token is in active sessions (valid 2FA login session)
+    if token and token in active_sessions:
         return True
 
-    # 2. Fallback check for master key
-    if x_admin_key and x_admin_key == ADMIN_SECRET_KEY:
+    # 2. Check for master secret key override
+    if token and token == ADMIN_SECRET_KEY:
         return True
 
     raise HTTPException(status_code=401, detail="Unauthorized: Admin access requires a valid session token.")
@@ -463,12 +459,15 @@ def get_face_gallery(request: Request, x_admin_token: str = Header(None, alias="
         gallery = []
         for s in students:
             has_encoding = bool(s.get("face_embedding"))
+            has_voice = bool(s.get("voice_embedding"))
             gallery.append({
                 "student_id": s["student_id"],
                 "name": s["name"],
                 "registered_at": "Active",
                 "has_embedding": has_encoding,
                 "vector_dims": 128 if has_encoding else 0,
+                "has_voice": has_voice,
+                "voice_dims": 128 if has_voice else 0,
                 "confidence": 94.8 if has_encoding else 0.0,
                 "status": "ACTIVE_ENROLLED" if has_encoding else "PENDING_SCAN"
             })
@@ -538,7 +537,7 @@ def get_audit_logs(request: Request, x_admin_token: str = Header(None, alias="X-
                 "subject_name": sub_info.get("name", "Class Session"),
                 "timestamp": l["timestamp"],
                 "is_present": l["is_present"],
-                "method": "WebRTC FaceID" if l["is_present"] else "Absent",
+                "method": "Facial Biometric" if l["is_present"] else "Absent",
                 "confidence": 95.2 if l["is_present"] else 0.0
             })
 

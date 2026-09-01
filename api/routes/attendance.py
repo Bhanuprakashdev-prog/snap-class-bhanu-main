@@ -106,6 +106,32 @@ async def photo_scan(
         "absent_ids": [s for s in all_candidate_students if s not in detected]
     }
 
+@router.post("/qr-checkin")
+def qr_checkin(
+    subject_id: int = Form(...),
+    token: str = Form(...),
+    student_id: int = Form(...)
+):
+    """Direct live QR scan check-in for enrolled student."""
+    if not verify_qr_token(str(subject_id), token):
+        raise HTTPException(status_code=400, detail="Invalid or expired QR token. Please scan the current rotating code.")
+    
+    # Check if student is enrolled
+    enrollment = supabase.table("subject_students").select("*").eq("student_id", student_id).eq("subject_id", subject_id).execute()
+    if not enrollment.data:
+        # Auto-enroll on verified QR scan
+        supabase.table("subject_students").insert({"student_id": student_id, "subject_id": subject_id}).execute()
+        
+    timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    create_attendance([{
+        "student_id": student_id,
+        "subject_id": subject_id,
+        "timestamp": timestamp,
+        "is_present": True
+    }])
+    
+    return {"success": True, "message": "Attendance successfully verified and recorded!", "student_id": student_id}
+
 @router.post("/qr-submit")
 async def qr_submit(
     subject_id: int = Form(...),
@@ -142,10 +168,78 @@ async def qr_submit(
     return {"success": True, "message": "Attendance marked securely.", "student_id": student_id}
 
 @router.post("/voice-scan")
+@router.post("/recognize-voice")
 async def voice_scan(
     subject_id: int = Form(...),
     audio: UploadFile = File(...)
 ):
-    """(Future) Process voice roll-call"""
-    # Requires integrating src.pipelines.voice_pipeline logic
-    return {"success": False, "message": "Voice scan not yet implemented"}
+    """Classroom voice roll-call speaker identification using 128-d Librosa Acoustic Embeddings."""
+    content = await audio.read()
+    if not content:
+        raise HTTPException(status_code=400, detail="No audio data received.")
+    
+    try:
+        from src.pipelines.voice_pipeline import process_bulk_audio
+        
+        # 1. Fetch enrolled students for this course
+        enrolled_res = supabase.table("subject_students").select("*, students(*)").eq("subject_id", subject_id).execute()
+        enrolled_students = enrolled_res.data or []
+        
+        if not enrolled_students:
+            raise HTTPException(status_code=404, detail="No students enrolled in this course.")
+            
+        candidates_dict = {
+            s["students"]["student_id"]: s["students"]["voice_embedding"]
+            for s in enrolled_students
+            if s.get("students") and s["students"].get("voice_embedding")
+        }
+        
+        if not candidates_dict:
+            raise HTTPException(status_code=400, detail="Enrolled students do not have registered voice biometric profiles yet.")
+            
+        # 2. Process audio & identify speakers
+        detected_scores = process_bulk_audio(content, candidates_dict)
+        
+        # 3. Log attendance
+        timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        logs_to_create = []
+        detected_info = []
+        absent_ids = []
+        
+        for node in enrolled_students:
+            student = node["students"]
+            sid = student["student_id"]
+            score = detected_scores.get(sid, 0.0)
+            is_present = bool(score > 0)
+            
+            if is_present:
+                detected_info.append({
+                    "student_id": sid,
+                    "name": student.get("name", f"Student #{sid}"),
+                    "confidence": round(score * 100, 1)
+                })
+            else:
+                absent_ids.append(sid)
+                
+            logs_to_create.append({
+                "student_id": sid,
+                "subject_id": subject_id,
+                "timestamp": timestamp,
+                "is_present": is_present
+            })
+            
+        create_attendance(logs_to_create)
+        
+        return {
+            "success": True,
+            "subject_id": subject_id,
+            "total_enrolled": len(enrolled_students),
+            "detected_students": detected_info,
+            "absent_ids": absent_ids,
+            "timestamp": timestamp,
+            "message": f"Voice roll-call verified: {len(detected_info)} present, {len(absent_ids)} absent."
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Voice processing error: {str(e)}")

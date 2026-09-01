@@ -1,7 +1,9 @@
 import numpy as np 
 import io
+import logging
 import librosa
-import streamlit as st
+
+logger = logging.getLogger(__name__)
 
 # Check if Resemblyzer is optionally available, otherwise use Librosa acoustic engine
 try:
@@ -10,13 +12,18 @@ except Exception:
     VoiceEncoder = None
     preprocess_wav = None
 
+_voice_encoder_instance = None
 
-@st.cache_resource
 def load_voice_encoder():
+    global _voice_encoder_instance
+    if _voice_encoder_instance is not None:
+        return _voice_encoder_instance
     if VoiceEncoder is not None:
         try:
-            return VoiceEncoder()
-        except Exception:
+            _voice_encoder_instance = VoiceEncoder()
+            return _voice_encoder_instance
+        except Exception as e:
+            logger.warning(f"Resemblyzer initialization failed: {e}")
             return None
     return None
 
@@ -71,7 +78,7 @@ def _extract_acoustic_embedding(audio, sr=16000) -> list | None:
 
         return embedding.tolist()
     except Exception as e:
-        st.warning(f"Feature extraction note: {e}")
+        logger.warning(f"Feature extraction note: {e}")
         return None
 
 
@@ -96,7 +103,7 @@ def get_voice_embedding(audio_bytes):
         # High-precision Librosa Acoustic Embedding (128-d)
         return _extract_acoustic_embedding(audio, sr)
     except Exception as e:
-        st.error(f"Voice embedding processing error: {e}")
+        logger.error(f"Voice embedding processing error: {e}")
         return None
 
 
@@ -117,7 +124,6 @@ def identify_speaker(new_embedding, candidates_dict, threshold=0.60):
         if stored_embedding:
             try:
                 stored_vec = np.array(stored_embedding, dtype=float)
-                # Handle dimension mismatch if any old records exist
                 if len(stored_vec) != len(new_vec):
                     min_len = min(len(stored_vec), len(new_vec))
                     stored_vec = stored_vec[:min_len]
@@ -154,7 +160,6 @@ def process_bulk_audio(audio_bytes, candidates_dict, threshold=0.60):
         identified_results = {}
 
         if len(segments) == 0:
-            # If no silence split found, test whole audio
             segments = [(0, len(audio))]
 
         for start, end in segments:
@@ -170,5 +175,5 @@ def process_bulk_audio(audio_bytes, candidates_dict, threshold=0.60):
 
         return identified_results
     except Exception as e:
-        st.error(f"Bulk audio analysis failed: {e}")
+        logger.error(f"Bulk audio analysis failed: {e}")
         return {}

@@ -20,7 +20,10 @@
 <body>
   <header>
     <div style="display: flex; align-items: center; gap: 0.75rem;">
-      <a href="index.html" class="brand-title">SnapClass</a>
+      <a href="index.html" class="brand-title">
+        <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        <span>SnapClass</span>
+      </a>
       <span class="badge badge-critical">Emergency Admin Setup</span>
     </div>
   </header>
@@ -28,31 +31,35 @@
   <main class="container">
     <div style="max-width: 480px; margin: 3rem auto;">
       <div class="card" style="text-align: center;">
-        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🚨</div>
-        <h2 style="font-size: 1.6rem; margin-bottom: 0.25rem;">Administrator Emergency Enrollment</h2>
+        <div class="icon-box-badge" style="background: var(--status-critical-bg); color: var(--status-critical); margin: 0 auto 0.75rem;">
+          <svg class="icon-svg icon-xl" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+        </div>
+        <h2 style="font-size: 1.6rem; margin-bottom: 0.25rem;">Administrator Biometric Setup</h2>
         <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem;">
-          Register or reset the Master Administrator face biometric. Requires the emergency recovery key.
+          Enroll or re-calibrate the Master Administrator facial biometric vector. Requires authorization key.
         </p>
 
         <div id="setup-alert" class="alert-banner alert-error"></div>
 
         <form id="setup-form" onsubmit="return false;">
           <div class="input-group" style="text-align: left;">
-            <label class="input-label" for="setup-passcode">Master Recovery Key</label>
+            <label class="input-label" for="setup-passcode">Master Authorization Key</label>
             <input type="password" id="setup-passcode" class="input-control" placeholder="••••••••" required>
           </div>
 
           <div style="margin: 1.5rem 0;">
-            <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Face Biometric Capture</div>
+            <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Biometric Optical Viewfinder</div>
             <video id="video-feed" autoplay playsinline></video>
             <canvas id="photo-canvas" style="display: none;"></canvas>
             
-            <button id="btn-start-camera" type="button" class="btn btn-secondary btn-sm" style="margin-top: 0.5rem;">
-              📷 Start Camera
+            <button id="btn-start-camera" type="button" class="btn btn-secondary btn-sm" style="margin-top: 0.5rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+              <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+              <span>Initialize Camera</span>
             </button>
           </div>
 
-          <button id="btn-register-face" class="btn btn-primary" style="width: 100%; margin-top: 1rem;" disabled>
+          <button id="btn-register-face" class="btn btn-primary" style="width: 100%; margin-top: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;" disabled>
+            <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/></svg>
             <span>Capture & Enroll Master Face</span>
           </button>
         </form>
@@ -74,7 +81,7 @@
         video.srcObject = stream;
         btnStartCamera.style.display = 'none';
         btnRegister.disabled = false;
-        SnapClass.showToast("Camera activated. Please look directly at the lens.", "info");
+        SnapClass.showToast("Camera active. Please look directly at the optical lens.", "info");
       } catch (err) {
         SnapClass.showAlert('setup-alert', 'Camera access denied or unavailable.', 'error');
       }
@@ -83,11 +90,11 @@
     btnRegister.addEventListener('click', async () => {
       const passInput = document.getElementById('setup-passcode');
       if (!passInput.value.trim()) {
-        return SnapClass.showAlert('setup-alert', 'Master recovery key is required.', 'error');
+        return SnapClass.showAlert('setup-alert', 'Master authorization key is required.', 'error');
       }
 
       if (!stream) {
-        return SnapClass.showAlert('setup-alert', 'Please start the camera first.', 'error');
+        return SnapClass.showAlert('setup-alert', 'Please initialize the camera first.', 'error');
       }
 
       SnapClass.setLoading(btnRegister, true);
@@ -97,7 +104,6 @@
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext('2d');
-      // Mirror fix for drawing
       ctx.translate(canvas.width, 0);
       ctx.scale(-1, 1);
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -118,7 +124,7 @@
             
             document.getElementById('setup-form').innerHTML = `
               <div class="alert-banner alert-success active" style="margin-bottom: 1rem;">
-                ✅ Master Face Enrolled Successfully! Session bound to IP.
+                Master Biometric Vector Enrolled Successfully!
               </div>
               <button onclick="window.location.href='admin.html'" class="btn btn-primary" style="width: 100%;">
                 Proceed to Admin Dashboard

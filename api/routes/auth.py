@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form, Request
+from pydantic import BaseModel
 from typing import Optional
 import numpy as np
 from PIL import Image
@@ -9,15 +10,62 @@ from src.pipelines.face_pipeline import predict_attendance, get_face_embeddings
 
 router = APIRouter()
 
+class TeacherLoginModel(BaseModel):
+    username: str
+    password: str
+
+class TeacherRegisterModel(BaseModel):
+    name: str
+    username: str
+    password: str
+
+class TeacherProfileModel(BaseModel):
+    name: str
+    username: str
+    password: Optional[str] = None
+    department: Optional[str] = None
+    contact: Optional[str] = None
+    bio: Optional[str] = None
+
 @router.post("/teacher/login")
-def login_teacher(username: str = Form(...), password: str = Form(...)):
+async def login_teacher(req: Request):
+    """Support both JSON payload and Form data for teacher login."""
+    content_type = req.headers.get("content-type", "")
+    if "application/json" in content_type:
+        body = await req.json()
+        username = body.get("username", "")
+        password = body.get("password", "")
+    else:
+        form = await req.form()
+        username = form.get("username", "")
+        password = form.get("password", "")
+
+    if not username or not password:
+        raise HTTPException(status_code=400, detail="Username and password are required.")
+
     teacher = teacher_login(username, password)
     if teacher:
         return {"success": True, "teacher": teacher}
     raise HTTPException(status_code=401, detail="Invalid username or password")
 
 @router.post("/teacher/register")
-def register_teacher(username: str = Form(...), password: str = Form(...), name: str = Form(...)):
+async def register_teacher(req: Request):
+    """Support both JSON payload and Form data for teacher registration."""
+    content_type = req.headers.get("content-type", "")
+    if "application/json" in content_type:
+        body = await req.json()
+        name = body.get("name", "")
+        username = body.get("username", "")
+        password = body.get("password", "")
+    else:
+        form = await req.form()
+        name = form.get("name", "")
+        username = form.get("username", "")
+        password = form.get("password", "")
+
+    if not name or not username or not password:
+        raise HTTPException(status_code=400, detail="Name, username, and password are required.")
+
     if check_teacher_exists(username):
         raise HTTPException(status_code=400, detail="Username is already taken")
     try:
@@ -27,15 +75,29 @@ def register_teacher(username: str = Form(...), password: str = Form(...), name:
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.put("/teacher/profile/{teacher_id}")
-def update_teacher_endpoint(
-    teacher_id: int, 
-    name: str = Form(...), 
-    username: str = Form(...), 
-    password: str = Form(None), 
-    department: str = Form(None), 
-    contact: str = Form(None), 
-    bio: str = Form(None)
-):
+async def update_teacher_endpoint(teacher_id: int, req: Request):
+    """Support both JSON payload and Form data for teacher profile updates."""
+    content_type = req.headers.get("content-type", "")
+    if "application/json" in content_type:
+        body = await req.json()
+        name = body.get("name")
+        username = body.get("username")
+        password = body.get("password")
+        department = body.get("department")
+        contact = body.get("contact")
+        bio = body.get("bio")
+    else:
+        form = await req.form()
+        name = form.get("name")
+        username = form.get("username")
+        password = form.get("password")
+        department = form.get("department")
+        contact = form.get("contact")
+        bio = form.get("bio")
+
+    if not name or not username:
+        raise HTTPException(status_code=400, detail="Name and username are required.")
+
     try:
         from src.database.db import update_teacher_profile
         updated = update_teacher_profile(teacher_id, name, username, password, department, contact, bio)
@@ -88,6 +150,30 @@ async def student_register(name: str = Form(...), image: UploadFile = File(...))
         train_classifier()
         
         return {"success": True, "student": student}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/student/voice-enroll")
+async def student_voice_enroll(
+    student_id: int = Form(...),
+    audio: UploadFile = File(...)
+):
+    """Enroll student voice biometric profile (128-d acoustic embedding)."""
+    content = await audio.read()
+    if not content:
+        raise HTTPException(status_code=400, detail="Empty audio recording.")
+    
+    try:
+        from src.pipelines.voice_pipeline import get_voice_embedding
+        emb = get_voice_embedding(content)
+        if not emb:
+            raise HTTPException(status_code=400, detail="Could not extract voice embedding. Please speak clearly for at least 1-2 seconds.")
+        
+        from src.database.config import supabase
+        supabase.table("students").update({"voice_embedding": emb}).eq("student_id", student_id).execute()
+        return {"success": True, "student_id": student_id, "message": "Voice biometric vector enrolled successfully."}
     except HTTPException:
         raise
     except Exception as e:
