@@ -47,13 +47,13 @@ Most institutional attendance systems act merely as passive digital registries. 
 
 ```mermaid
 graph TD
-    subgraph Client Application Layer (Mobile & Desktop)
+    subgraph Client_Layer ["Client Application Layer (Mobile & Desktop)"]
         A1["📱 Student Portal<br/>(student.html)"]
         A2["👨‍🏫 Faculty Studio<br/>(teacher.html)"]
         A3["🏛️ Dean & Admin Hub<br/>(admin.html & admin-setup.html)"]
     end
 
-    subgraph API Gateway & Service Layer (FastAPI)
+    subgraph API_Layer ["API Gateway & Service Layer (FastAPI)"]
         B1["FastAPI Core Router (api/main.py)"]
         B2["/api/auth (Bcrypt & Face Verification)"]
         B3["/api/attendance (QR & Multi-Face Roll-Call)"]
@@ -63,14 +63,14 @@ graph TD
         B7["/api/reports (University CSV Export Engine)"]
     end
 
-    subgraph AI & Machine Learning Engine
+    subgraph ML_Engine ["AI & Machine Learning Engine"]
         C1["dlib ResNet-34 Embedder<br/>(128-d Metric Space)"]
         C2["Scikit-Learn Logistic Regression<br/>(Risk Probability Model)"]
         C3["SMA Trajectory Slope Analyzer<br/>(Trend Direction Engine)"]
         C4["Mathematical Recovery Calculus<br/>(75% & 85% Thresholds)"]
     end
 
-    subgraph Persistence & Infrastructure Layer
+    subgraph Persistence_Layer ["Persistence & Infrastructure Layer"]
         D1["Supabase PostgreSQL Cloud DB<br/>(students, teachers, subjects, attendance_logs)"]
         D2["Master Administrator Vector Vault<br/>(src/database/admin_face_vector.json)"]
         D3["In-Memory Ephemeral Store<br/>(5s QR Tokens, Active IP Sessions)"]
@@ -80,14 +80,28 @@ graph TD
     A2 --> B1
     A3 --> B1
 
-    B1 --> B2 & B3 & B4 & B5 & B6 & B7
+    B1 --> B2
+    B1 --> B3
+    B1 --> B4
+    B1 --> B5
+    B1 --> B6
+    B1 --> B7
 
-    B2 & B3 --> C1
-    B5 --> C2 & C3 & C4
+    B2 --> C1
+    B3 --> C1
+    B5 --> C2
+    B5 --> C3
+    B5 --> C4
 
-    B2 & B3 & B4 & B5 & B6 & B7 --> D1
+    B2 --> D1
+    B3 --> D1
+    B4 --> D1
+    B5 --> D1
+    B6 --> D1
+    B7 --> D1
     B6 --> D2
-    B3 & B6 --> D3
+    B3 --> D3
+    B6 --> D3
 ```
 
 ---
@@ -199,7 +213,8 @@ flowchart TD
     StudentDash --> CheckIn{"Mark Attendance"}
     CheckIn -- Live QR Scan --> ScanCamera["Scan Projected Classroom QR"]
     CheckIn -- Manual Passcode --> EnterCode["Enter 12-char Passcode"]
-    ScanCamera & EnterCode --> VerifyToken["POST /api/attendance/qr-checkin"]
+    ScanCamera --> VerifyToken["POST /api/attendance/qr-checkin"]
+    EnterCode --> VerifyToken
     VerifyToken --> LogSuccess["✅ Attendance Logged"]
     
     StudentDash --> ViewRecovery["📈 AttendSmartly Recovery Target Calculator"]
@@ -241,11 +256,13 @@ $$P(\text{Debarment} \mid X) = \frac{1}{1 + e^{-(\beta_0 + \beta_1 X_{\text{rate
 ---
 
 ### 4. AttendSmartly Recovery & Buffer Calculus
-Given total scheduled classes $T$, attended classes $A$, and target threshold $R = 0.75$ ($75\%$):
+Given total scheduled classes $T$, attended classes $A$, and minimum eligibility threshold $R = 0.75$ ($75\%$):
 
-$$\text{Classes Needed to Reach } 75\% = \max\left(0, \left\lceil \frac{0.75 \times T - A}{1 - 0.75} \right\rceil\right) = \max(0, \lceil 3T - 4A \rceil)$$
+* **Classes Needed to Reach 75%**:
+  $$\text{Classes Needed} = \max\left(0, \left\lceil \frac{0.75 \cdot T - A}{0.25} \right\rceil\right) = \max\left(0, \left\lceil 3T - 4A \right\rceil\right)$$
 
-$$\text{Safe Buffer Absences Allowed} = \max\left(0, \left\lfloor \frac{A - 0.75 \times T}{0.75} \right\rfloor\right) = \max(0, \left\lfloor \frac{4A - 3T}{3} \right\rfloor\right)$$
+* **Safe Buffer Absences Allowed**:
+  $$\text{Safe Skips} = \max\left(0, \left\lfloor \frac{A - 0.75 \cdot T}{0.75} \right\rfloor\right) = \max\left(0, \left\lfloor \frac{4A - 3T}{3} \right\rfloor\right)$$
 
 ---
 
