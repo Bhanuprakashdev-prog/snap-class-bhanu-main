@@ -26,8 +26,8 @@
 - [Complete REST API Specification](#-complete-rest-api-specification)
 - [Database Schema & Entity Relationships](#-database-schema--entity-relationships)
 - [Security & Privacy Architecture (OWASP 2025)](#-security--privacy-architecture-owasp-2025)
-- [Installation & Quickstart Guide](#-installation--quickstart-guide)
 - [Default Test Credentials & Access Points](#-default-test-credentials--access-points)
+- [Setup & Deployment Guide](setup.md)
 
 ---
 

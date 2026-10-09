@@ -27,6 +27,7 @@ app.include_router(subjects.router, prefix="/api/subjects", tags=["Subjects"])
 app.include_router(insights.router, prefix="/api/insights", tags=["Insights"])
 app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
 app.include_router(exports.router, prefix="/api/exports", tags=["Exports"])
+app.include_router(exports.router, prefix="/api/reports", tags=["Reports"])
 
 # Mount static files for the frontend if the directory exists
 frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend")

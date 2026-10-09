@@ -1,21 +1,24 @@
-streamlit
-streamlit-autorefresh
+# SnapClass Production Requirements
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+pydantic>=2.6.0
+python-multipart>=0.0.9
 
-# Utilitites 
-numpy
-pandas
+# Database & Authentication
+supabase>=2.3.0
+bcrypt>=4.1.0
 
-# FACE RECOGNITION
-scikit-learn
-dlib-bin
-git+https://github.com/ageitgey/face_recognition_models
-setuptools<70.0.0
+# Scientific & Machine Learning
+numpy>=1.26.0
+pandas>=2.2.0
+scikit-learn>=1.4.0
+pillow>=10.2.0
 
-supabase
-bcrypt
+# Biometrics (Face & Voice)
+dlib-bin>=19.24.2
+face-recognition-models>=0.3.0
+librosa>=0.10.1
+soundfile>=0.12.1
 
-segno
-pillow
-
-librosa
-resemblyzer
+# Utility
+segno>=1.6.0

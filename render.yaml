@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: snapclass-api
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    region: oregon
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: ADMIN_KEY
+        value: admin123
+      - key: SESSION_SECRET
+        generateValue: true

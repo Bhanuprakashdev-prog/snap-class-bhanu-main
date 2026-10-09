@@ -9,6 +9,7 @@ from src.database.config import supabase
 router = APIRouter()
 
 @router.get("/attendance/{subject_id}")
+@router.get("/export/{subject_id}")
 def export_attendance_csv(subject_id: int):
     """Teacher view: Export 1-click CSV of attendance records."""
     try:

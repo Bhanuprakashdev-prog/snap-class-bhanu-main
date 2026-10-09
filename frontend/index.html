@@ -3,121 +3,519 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SnapClass | Academic Biometric Attendance & Analytics</title>
+  <title>SnapClass | AI Biometric Attendance & Institutional Analytics</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
+
+  <!-- Global Header Navigation -->
   <header>
-    <div class="brand-title">
-      <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+    <a href="index.html" class="brand-title">
+      <div class="brand-icon-wrap">
+        <svg class="icon-svg icon-md" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
       <span>SnapClass</span>
-    </div>
+    </a>
+    
     <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <div class="header-nav-actions" style="display: none; gap: 0.5rem;" id="desktop-nav-links">
+        <a href="student.html" class="nav-link-btn">
+          <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Student</span>
+        </a>
+        <a href="teacher.html" class="nav-link-btn">
+          <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10M6 10h10"/></svg>
+          <span>Faculty</span>
+        </a>
+        <a href="admin.html" class="nav-link-btn">
+          <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/></svg>
+          <span>Dean Hub</span>
+        </a>
+      </div>
+
       <span class="badge badge-safe">
         <span class="pulse-dot"></span>
-        System Operational
+        <span>AI Engine Live</span>
       </span>
     </div>
   </header>
 
-  <main class="container" style="text-align: center; padding-top: clamp(2rem, 4vw, 3.5rem);">
-    <div style="max-width: 760px; margin: 0 auto 2.5rem auto;">
-      <span class="badge badge-primary" style="margin-bottom: 1rem;">Institutional Biometric Attendance Platform</span>
-      <h1 style="font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.15; margin-bottom: 0.75rem; color: var(--text-heading);">
-        AI Biometric Attendance & <span style="color: var(--primary);">Academic Analytics</span>
-      </h1>
-      <p style="color: var(--text-muted); font-size: clamp(0.95rem, 1.8vw, 1.15rem); line-height: 1.6; max-width: 600px; margin: 0 auto;">
-        Real-time facial verification roll-call, dynamic anti-proxy QR codes, and predictive attendance risk forecasting.
-      </p>
-    </div>
-
-    <!-- Portal Selection Cards -->
-    <div class="grid-cards" style="max-width: 1040px; margin: 0 auto;">
-      
-      <!-- Student Portal -->
-      <div class="card card-hover" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
-        <div>
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-            <div class="icon-box-badge" style="background: var(--primary-light); color: var(--primary);">
-              <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </div>
-            <span class="badge badge-primary">Student</span>
-          </div>
-          <h2 style="font-size: 1.35rem; margin-bottom: 0.4rem;">Student Portal</h2>
-          <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.5rem;">
-            Facial self check-in, live classroom QR code scanner, interactive attendance recovery roadmap, and course rosters.
-          </p>
-        </div>
-        <a href="student.html" class="btn btn-primary" style="width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;">
-          <span>Enter Student Portal</span>
-          <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
-        </a>
-      </div>
-
-      <!-- Teacher Portal -->
-      <div class="card card-hover" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
-        <div>
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-            <div class="icon-box-badge" style="background: #FDF2F8; color: #DB2777;">
-              <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10M6 10h10"/></svg>
-            </div>
-            <span class="badge" style="background: #FDF2F8; color: #DB2777; border: 1px solid #FBCFE8;">Faculty</span>
-          </div>
-          <h2 style="font-size: 1.35rem; margin-bottom: 0.4rem;">Faculty Studio</h2>
-          <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.5rem;">
-            Rotating 5-second dynamic QR projector, classroom group photo recognition, ML risk radar, and compliance exports.
-          </p>
-        </div>
-        <a href="teacher.html" class="btn btn-secondary" style="width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;">
-          <span>Enter Faculty Studio</span>
-          <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
-        </a>
-      </div>
-
-      <!-- Admin Portal -->
-      <div class="card card-hover" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
-        <div>
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-            <div class="icon-box-badge" style="background: var(--secondary-light); color: var(--secondary);">
-              <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/></svg>
-            </div>
-            <span class="badge badge-secondary">Dean & Admin</span>
-          </div>
-          <h2 style="font-size: 1.35rem; margin-bottom: 0.4rem;">Dean & Executive Admin</h2>
-          <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.5rem;">
-            Protected 2FA security gate, campus-wide KPIs, faculty compliance, and cross-subject examination defaulter watchlists.
-          </p>
-        </div>
-        <a href="admin.html" class="btn btn-secondary" style="width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;">
-          <span>Enter Admin Hub</span>
-          <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
-        </a>
-      </div>
-
-    </div>
-
-    <!-- Trust & Architecture Footer -->
-    <div style="margin-top: 3.5rem; padding-top: 1.75rem; border-top: 1px solid var(--border-light); display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; color: var(--text-light); font-size: 0.85rem;">
-      <span style="display: inline-flex; align-items: center; gap: 0.35rem;">
-        <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>Biometric Security</span>
-      </span>
-      <span>•</span>
-      <span style="display: inline-flex; align-items: center; gap: 0.35rem;">
+  <!-- Main Hero Section -->
+  <main class="container">
+    
+    <section class="hero-wrapper">
+      <div class="hero-pill-badge">
         <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <span>High-Performance ML</span>
-      </span>
-      <span>•</span>
-      <span style="display: inline-flex; align-items: center; gap: 0.35rem;">
-        <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01M12 12h.01"/></svg>
-        <span>Dynamic QR Anti-Proxy</span>
-      </span>
-      <span>•</span>
-      <span style="display: inline-flex; align-items: center; gap: 0.35rem;">
-        <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
-        <span>Predictive Risk Modeling</span>
-      </span>
-    </div>
+        <span>Institutional Attendance Cloud • Zero Proxy • Real-time AI</span>
+      </div>
+
+      <h1 class="hero-headline">
+        Attendance Verification, <br>
+        <span class="text-gradient">Re-imagined for Higher Education</span>
+      </h1>
+
+      <p class="hero-subtext">
+        Eliminate proxy roll-calls with rotating 5-second dynamic QR codes, sub-second facial biometric verification, and autonomous examination eligibility risk forecasting.
+      </p>
+
+      <div style="display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;">
+        <a href="student.html" class="btn btn-primary" style="padding: 0.85rem 1.75rem; font-size: 1rem;">
+          <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Launch Student Portal</span>
+        </a>
+        <a href="teacher.html" class="btn btn-secondary" style="padding: 0.85rem 1.75rem; font-size: 1rem;">
+          <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10M6 10h10"/></svg>
+          <span>Open Faculty Studio</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Interactive Live Attendance Simulation Stage -->
+    <section class="simulation-stage">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem;">
+        <div>
+          <span class="badge badge-primary" style="margin-bottom: 0.3rem;">Live Workflow Simulation</span>
+          <h2 style="font-size: 1.35rem; margin: 0;">Interactive Roll-Call & Biometric Engine</h2>
+        </div>
+        <div style="display: flex; gap: 0.4rem; align-items: center;">
+          <span class="badge badge-safe">
+            <span class="pulse-dot"></span> 60 FPS Sync
+          </span>
+        </div>
+      </div>
+
+      <div class="simulation-grid">
+        
+        <!-- Station 1: Faculty Dynamic QR Projector -->
+        <div class="sim-station-card">
+          <div class="sim-station-header">
+            <span>1. Faculty Dynamic Projector</span>
+            <span style="color: #60A5FA; font-size: 0.72rem;">Rotating 5s</span>
+          </div>
+          
+          <div style="text-align: center;">
+            <div class="qr-rotator-box">
+              <div class="qr-progress-ring"></div>
+              <!-- Scaled Vector QR Mock -->
+              <svg width="110" height="110" viewBox="0 0 24 24" fill="#0F172A">
+                <path d="M3 3h6v6H3V3zm2 2v2h2V5H5zm8-2h6v6h-6V3zm2 2v2h2V5h-2zM3 13h6v6H3v-6zm2 2v2h2v-2H5zm13-2h3v3h-3v-3zm-5 0h3v3h-3v-3zm2 3h3v3h-3v-3zm3 0h3v3h-3v-3zm-5 3h3v3h-3v-3zm0-8h3v3h-3V8zm3 0h3v3h-3V8z"/>
+              </svg>
+            </div>
+            
+            <div style="font-size: 0.78rem; font-weight: 700; color: #F1F5F9; margin-top: 0.5rem;">
+              CS-301: Distributed Systems
+            </div>
+            <div style="font-size: 0.72rem; color: #94A3B8;">
+              Token rotates in: <span id="sim-timer-count" style="color: #60A5FA; font-weight: 700; font-family: monospace;">4s</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Station 2: Student Facial Biometric Viewfinder -->
+        <div class="sim-station-card" style="border-color: rgba(59, 130, 246, 0.4);">
+          <div class="sim-station-header">
+            <span>2. Student Biometric Scan</span>
+            <span class="badge badge-primary" style="padding: 2px 6px; font-size: 0.65rem;">Optical Match</span>
+          </div>
+
+          <div class="biometric-sim-viewport">
+            <div class="scanner-laser-beam"></div>
+            <div class="facial-mesh-dots"></div>
+            <div class="biometric-avatar-mock">
+              <svg class="icon-svg" style="width: 5rem; height: 5rem; opacity: 0.85;" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; align-items: center; background: rgba(11,17,32,0.85); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-family: monospace;">
+              <span style="color: #34D399;">● Face Detected</span>
+              <span style="color: #60A5FA;">99.8% Match</span>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 0.6rem; font-size: 0.76rem; color: #CBD5E1;">
+            Biometric embedding verified in <strong style="color: #34D399;">180ms</strong>
+          </div>
+        </div>
+
+        <!-- Station 3: Live Real-time Roll-call Stream -->
+        <div class="sim-station-card">
+          <div class="sim-station-header">
+            <span>3. Live Attendance Feed</span>
+            <span style="color: #34D399; font-size: 0.72rem;">● Active Stream</span>
+          </div>
+
+          <div class="attendance-ticker-feed" id="sim-ticker-container">
+            <div class="ticker-card-item">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div class="ticker-avatar">SM</div>
+                <div>
+                  <div style="font-weight: 700; color: #FFFFFF;">Sarah Miller</div>
+                  <div style="font-size: 0.7rem; color: #94A3B8;">CS-301 • 09:02:14 AM</div>
+                </div>
+              </div>
+              <span class="badge badge-safe" style="font-size: 0.65rem; padding: 2px 6px;">Verified</span>
+            </div>
+
+            <div class="ticker-card-item">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div class="ticker-avatar" style="color: #F472B6;">DC</div>
+                <div>
+                  <div style="font-weight: 700; color: #FFFFFF;">David Chen</div>
+                  <div style="font-size: 0.7rem; color: #94A3B8;">CS-301 • 09:02:18 AM</div>
+                </div>
+              </div>
+              <span class="badge badge-safe" style="font-size: 0.65rem; padding: 2px 6px;">Verified</span>
+            </div>
+
+            <div class="ticker-card-item">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div class="ticker-avatar" style="color: #FBBF24;">EW</div>
+                <div>
+                  <div style="font-weight: 700; color: #FFFFFF;">Emma Watson</div>
+                  <div style="font-size: 0.7rem; color: #94A3B8;">CS-301 • 09:02:22 AM</div>
+                </div>
+              </div>
+              <span class="badge badge-safe" style="font-size: 0.65rem; padding: 2px 6px;">Verified</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 0.75rem; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; font-size: 0.75rem; color: #94A3B8;">
+            <span>Current Roll-Call:</span>
+            <span style="color: #34D399; font-weight: 700;">94.2% Attendance</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Portal Gateway Selection Cards -->
+    <section style="margin: 3.5rem 0;">
+      <div style="text-align: center; margin-bottom: 2.25rem;">
+        <span class="badge badge-primary" style="margin-bottom: 0.4rem;">Institutional Access Hub</span>
+        <h2 style="font-size: clamp(1.75rem, 3vw, 2.3rem);">Choose Your Portal Gateway</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Select your role to access dedicated biometric and roll-call intelligence tools.</p>
+      </div>
+
+      <div class="grid-cards" style="max-width: 1080px; margin: 0 auto;">
+        
+        <!-- Student Portal Card -->
+        <div class="card card-hover" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+              <div class="icon-box-badge" style="background: var(--primary-light); color: var(--primary);">
+                <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <span class="badge badge-primary">Student</span>
+            </div>
+            <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem;">Student Attendance Portal</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.55; margin-bottom: 1.5rem;">
+              Optical facial check-in, real-time dynamic QR scanner, attendance recovery roadmap calculator, and subject rosters.
+            </p>
+          </div>
+          <a href="student.html" class="btn btn-primary" style="width: 100%;">
+            <span>Enter Student Portal</span>
+            <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </a>
+        </div>
+
+        <!-- Faculty Studio Card -->
+        <div class="card card-hover" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+              <div class="icon-box-badge" style="background: var(--faculty-light); color: var(--faculty);">
+                <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10M6 10h10"/></svg>
+              </div>
+              <span class="badge" style="background: var(--faculty-light); color: var(--faculty); border: 1px solid var(--faculty-border);">Faculty</span>
+            </div>
+            <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem;">Faculty Studio</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.55; margin-bottom: 1.5rem;">
+              Rotating 5-second anti-proxy QR projector, classroom group photo recognition, ML risk radar, and compliance exports.
+            </p>
+          </div>
+          <a href="teacher.html" class="btn btn-secondary" style="width: 100%;">
+            <span>Enter Faculty Studio</span>
+            <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </a>
+        </div>
+
+        <!-- Dean & Executive Admin Card -->
+        <div class="card card-hover" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+              <div class="icon-box-badge" style="background: var(--admin-light); color: var(--admin);">
+                <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/></svg>
+              </div>
+              <span class="badge badge-secondary">Dean & Admin</span>
+            </div>
+            <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem;">Dean & Executive Hub</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.55; margin-bottom: 1.5rem;">
+              Biometric 2FA security gate, campus-wide KPIs, faculty compliance monitoring, and defaulter watchlists.
+            </p>
+          </div>
+          <a href="admin.html" class="btn btn-secondary" style="width: 100%;">
+            <span>Enter Admin Hub</span>
+            <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Institutional Trust Metrics Ribbon -->
+    <section style="margin: 3.5rem 0;">
+      <div class="grid-cards" style="max-width: 1080px; margin: 0 auto;">
+        <div class="kpi-stat-card">
+          <div class="kpi-icon-box" style="background: var(--primary-light); color: var(--primary);">
+            <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: var(--text-heading);">&lt; 0.3s</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">Recognition Latency</div>
+          </div>
+        </div>
+
+        <div class="kpi-stat-card">
+          <div class="kpi-icon-box" style="background: var(--status-safe-bg); color: var(--status-safe);">
+            <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: var(--text-heading);">99.9%</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">Proxy Elimination Rate</div>
+          </div>
+        </div>
+
+        <div class="kpi-stat-card">
+          <div class="kpi-icon-box" style="background: var(--faculty-light); color: var(--faculty);">
+            <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: var(--text-heading);">100%</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">Automated Audit Ready</div>
+          </div>
+        </div>
+
+        <div class="kpi-stat-card">
+          <div class="kpi-icon-box" style="background: var(--admin-light); color: var(--admin);">
+            <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: var(--text-heading);">350k+</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">Roll-Calls Logged</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Attendance Recovery Calculator Feature -->
+    <section style="max-width: 860px; margin: 3.5rem auto;">
+      <div class="calc-slider-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem;">
+          <div>
+            <span class="badge badge-warning" style="margin-bottom: 0.25rem;">Interactive Simulator</span>
+            <h3 style="font-size: 1.35rem; margin: 0;">Attendance Recovery & Exam Eligibility Calculator</h3>
+          </div>
+          <span class="badge badge-primary">Target: 75% Threshold</span>
+        </div>
+
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem;">
+          Test how attending upcoming consecutive classes improves your overall percentage and clears exam defaulter status.
+        </p>
+
+        <div style="margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem;">
+            <span>Current Attendance: <strong id="calc-current-val" style="color: var(--primary);">65% (13 of 20 classes)</strong></span>
+            <span>Target: 75%</span>
+          </div>
+          <input type="range" id="calc-slider" class="range-slider" min="30" max="95" value="65">
+        </div>
+
+        <div style="background: var(--surface-card); border-radius: var(--radius-md); padding: 1rem 1.25rem; border: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Required Action Plan:</div>
+            <div id="calc-result-text" style="font-size: 0.95rem; font-weight: 700; color: var(--text-heading);">
+              Attend next <span style="color: var(--primary);">8 consecutive lectures</span> without absence.
+            </div>
+          </div>
+          <div id="calc-status-badge" class="badge badge-warning">At Risk (Defaulter)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 Architectural Pillars Matrix -->
+    <section class="feature-matrix-grid">
+      <div class="feature-box">
+        <div class="icon-box-badge" style="background: var(--primary-light); color: var(--primary); margin-bottom: 1rem;">
+          <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.4rem;">Anti-Spoofing Facial Defense</h3>
+        <p style="color: var(--text-muted); font-size: 0.86rem; line-height: 1.55;">
+          Real-time optical face recognition with cosine similarity thresholds prevents proxy roll-calls and spoofing attempts.
+        </p>
+      </div>
+
+      <div class="feature-box">
+        <div class="icon-box-badge" style="background: var(--faculty-light); color: var(--faculty); margin-bottom: 1rem;">
+          <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01M12 12h.01"/></svg>
+        </div>
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.4rem;">Rotating Anti-Proxy QR</h3>
+        <p style="color: var(--text-muted); font-size: 0.86rem; line-height: 1.55;">
+          5-second HMAC token rotation ensures QR codes cannot be screenshotted, forwarded, or scanned outside the classroom.
+        </p>
+      </div>
+
+      <div class="feature-box">
+        <div class="icon-box-badge" style="background: var(--status-warning-bg); color: var(--status-warning); margin-bottom: 1rem;">
+          <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+        </div>
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.4rem;">Predictive Defaulter Radar</h3>
+        <p style="color: var(--text-muted); font-size: 0.86rem; line-height: 1.55;">
+          Machine learning algorithms alert faculty before students cross into exam disqualification status, generating recovery plans.
+        </p>
+      </div>
+
+      <div class="feature-box">
+        <div class="icon-box-badge" style="background: var(--admin-light); color: var(--admin); margin-bottom: 1rem;">
+          <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        </div>
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.4rem;">Autonomous Compliance Exports</h3>
+        <p style="color: var(--text-muted); font-size: 0.86rem; line-height: 1.55;">
+          Instant institutional compliance reports formatted for accreditation audits, faculty meetings, and ERP synchronizations.
+        </p>
+      </div>
+    </section>
+
   </main>
+
+  <!-- Global Footer -->
+  <footer>
+    <div class="container footer-content">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div class="brand-icon-wrap" style="width: 1.85rem; height: 1.85rem;">
+          <svg class="icon-svg icon-xs" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        </div>
+        <div>
+          <strong style="color: var(--text-heading);">SnapClass</strong> • AI Attendance Platform
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1.25rem; flex-wrap: wrap;">
+        <a href="student.html" style="color: var(--text-muted); text-decoration: none; font-weight: 500;">Student Portal</a>
+        <a href="teacher.html" style="color: var(--text-muted); text-decoration: none; font-weight: 500;">Faculty Studio</a>
+        <a href="admin.html" style="color: var(--text-muted); text-decoration: none; font-weight: 500;">Dean Executive Gate</a>
+      </div>
+
+      <div style="font-size: 0.8rem; color: var(--text-light);">
+        Biometric Vector Vault • OWASP 2025 Standard
+      </div>
+    </div>
+  </footer>
+
+  <!-- Page Transition Overlay -->
+  <div id="page-transition" class="page-transition-overlay">
+    <div style="text-align: center; color: #FFFFFF;">
+      <div style="width: 38px; height: 38px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #3B82F6; border-radius: 50%; animation: btnSpin 0.7s linear infinite; margin: 0 auto 0.75rem;"></div>
+      <div style="font-family: 'Outfit', sans-serif; font-size: 0.92rem; font-weight: 600; letter-spacing: 0.04em;">Entering Workspace...</div>
+    </div>
+  </div>
+
+  <!-- Interactive Simulation Script -->
+  <script>
+    // Desktop Nav Link Revealer
+    if (window.innerWidth >= 768) {
+      const desktopNav = document.getElementById('desktop-nav-links');
+      if (desktopNav) desktopNav.style.display = 'flex';
+    }
+
+    // Smooth Role Click Transition Engine
+    const transitionOverlay = document.getElementById('page-transition');
+    document.querySelectorAll('a[href$=".html"]').forEach(anchor => {
+      anchor.addEventListener('click', (e) => {
+        const targetUrl = anchor.getAttribute('href');
+        if (!targetUrl || targetUrl === '#' || targetUrl.startsWith('http') || targetUrl.startsWith('mailto')) return;
+        
+        e.preventDefault();
+        if (transitionOverlay) {
+          transitionOverlay.classList.add('active');
+          setTimeout(() => {
+            window.location.href = targetUrl;
+          }, 260);
+        } else {
+          window.location.href = targetUrl;
+        }
+      });
+    });
+
+    // Dynamic 5s QR Countdown Simulation
+    let countdown = 5;
+    const timerDisplay = document.getElementById('sim-timer-count');
+    setInterval(() => {
+      countdown = countdown <= 1 ? 5 : countdown - 1;
+      if (timerDisplay) timerDisplay.textContent = countdown + 's';
+    }, 1000);
+
+    // Dynamic Live Ticker Stream Simulation
+    const sampleStudents = [
+      { name: "Alex Johnson", initials: "AJ", color: "#3B82F6", course: "CS-301" },
+      { name: "Sophia Martinez", initials: "SM", color: "#EC4899", course: "CS-301" },
+      { name: "Liam Patel", initials: "LP", color: "#10B981", course: "CS-301" },
+      { name: "Olivia Brown", initials: "OB", color: "#F59E0B", course: "CS-301" },
+      { name: "Noah Davis", initials: "ND", color: "#8B5CF6", course: "CS-301" }
+    ];
+
+    let studentIndex = 0;
+    const tickerContainer = document.getElementById('sim-ticker-container');
+
+    setInterval(() => {
+      if (!tickerContainer) return;
+      const s = sampleStudents[studentIndex % sampleStudents.length];
+      studentIndex++;
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+      const item = document.createElement('div');
+      item.className = 'ticker-card-item';
+      item.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <div class="ticker-avatar" style="color: ${s.color};">${s.initials}</div>
+          <div>
+            <div style="font-weight: 700; color: #FFFFFF;">${s.name}</div>
+            <div style="font-size: 0.7rem; color: #94A3B8;">${s.course} • ${timeStr}</div>
+          </div>
+        </div>
+        <span class="badge badge-safe" style="font-size: 0.65rem; padding: 2px 6px;">Verified</span>
+      `;
+
+      tickerContainer.insertBefore(item, tickerContainer.firstChild);
+      if (tickerContainer.children.length > 3) {
+        tickerContainer.removeChild(tickerContainer.lastChild);
+      }
+    }, 3200);
+
+    // Interactive Attendance Recovery Calculator
+    const calcSlider = document.getElementById('calc-slider');
+    const calcValText = document.getElementById('calc-current-val');
+    const calcResultText = document.getElementById('calc-result-text');
+    const calcBadge = document.getElementById('calc-status-badge');
+
+    if (calcSlider) {
+      calcSlider.addEventListener('input', (e) => {
+        const pct = parseInt(e.target.value, 10);
+        const totalClasses = 20;
+        const attended = Math.round((pct / 100) * totalClasses);
+        calcValText.textContent = `${pct}% (${attended} of ${totalClasses} classes)`;
+
+        if (pct >= 75) {
+          calcBadge.className = 'badge badge-safe';
+          calcBadge.textContent = 'Eligible for Examination';
+          calcResultText.innerHTML = `You have satisfied the 75% institutional threshold. Safe buffer: <strong style="color: var(--status-safe);">${attended - 15} lectures</strong>.`;
+        } else {
+          const needed = Math.max(1, Math.ceil((0.75 * totalClasses - attended) / (1 - 0.75)));
+          calcBadge.className = 'badge badge-warning';
+          calcBadge.textContent = 'At Risk (Defaulter)';
+          calcResultText.innerHTML = `Attend next <span style="color: var(--primary); font-weight:800;">${needed} consecutive lectures</span> without absence to reach 75%.`;
+        }
+      });
+    }
+  </script>
 </body>
 </html>
