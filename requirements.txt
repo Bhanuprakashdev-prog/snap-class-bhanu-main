@@ -7,6 +7,7 @@ python-multipart>=0.0.9
 # Database & Authentication
 supabase>=2.3.0
 bcrypt>=4.1.0
+python-dotenv>=1.0.0
 
 # Scientific & Machine Learning
 numpy>=1.26.0
